@@ -1,0 +1,38 @@
+{
+  "name": "wotblitz",
+  "version": "0.0.1",
+  "description": "A command line interface to access the World of Tank Blitz API.",
+  "main": "wotblitz.js",
+  "scripts": {
+    "test": "./node_modules/karma/bin/karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CodeMan99/wotblitz"
+  },
+  "keywords": [
+    "wot",
+    "tank",
+    "tanks",
+    "blitz"
+  ],
+  "author": "Cody A. Taylor <codemister99@yahoo.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CodeMan99/wotblitz/issues"
+  },
+  "homepage": "https://github.com/CodeMan99/wotblitz",
+  "dependencies": {
+    "async": "^0.9.0",
+    "colors": "^1.1.0",
+    "commander": "^2.8.1",
+    "lodash": "^3.8.0",
+    "request": "^2.55.0"
+  },
+  "devDependencies": {
+    "eslint": "^0.20.0",
+    "karma": "^0.12.31",
+    "should": "^6.0.1",
+    "sinon": "^1.14.1"
+  }
+}

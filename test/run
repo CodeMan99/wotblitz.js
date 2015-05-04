@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Originally copied from: 
+# https://raw.githubusercontent.com/tj/commander.js/c6c84726050b19c0373de27cd359f3baddff579f/test/run 
+# See license at https://github.com/tj/commander.js/blob/c6c84726050b19c0373de27cd359f3baddff579f/LICENSE
+
+export NODE_ENV=test
+
+echo
+for file in $@; do
+  printf "\033[90m   ${file#test/}\033[0m "
+  node $file 2> /tmp/stderr && echo "\033[36m✓\033[0m"
+  code=$?
+  if test $code -ne 0; then
+    echo "\033[31m✖\033[0m"
+    cat /tmp/stderr >&2
+    exit $code
+  fi
+done
+echo

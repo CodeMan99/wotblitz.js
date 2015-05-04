@@ -19,4 +19,5 @@ To see an overview, do `wotblitz --help`.
 [License](LICENSE.md)
 ---------------------
 
-Internet Software Consortium (ISC). May change to a Free Software license in the near future.
+This project uses the Internet Software Consortium (ISC) license unless otherwise
+stated at the top of a file.

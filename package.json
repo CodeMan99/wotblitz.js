@@ -4,7 +4,7 @@
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "wotblitz.js",
   "scripts": {
-    "test": "./node_modules/karma/bin/karma start"
+    "test": "make test"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "eslint": "^0.20.0",
-    "karma": "^0.12.31",
     "should": "^6.0.1",
     "sinon": "^1.14.1"
   }

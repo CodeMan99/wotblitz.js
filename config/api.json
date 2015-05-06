@@ -1,23 +1,23 @@
 {
   "auth": {
-    "login": "api.worldoftanks.com/wot/auth/login",
-    "prolongate": "api.worldoftanks.com/wot/auth/prolongate",
-    "logout": "api.worldoftanks.com/wot/auth/logout"
+    "-l, --login": "api.worldoftanks.com/wot/auth/login",
+    "-p, --prolongate": "api.worldoftanks.com/wot/auth/prolongate",
+    "-q, --logout": "api.worldoftanks.com/wot/auth/logout"
   },
   "account": {
-    "list": "api.wotblitz.com/wotb/account/list",
-    "info": "api.wotblitz.com/wotb/account/info",
-    "achievements": "api.wotblitz.com/wotb/account/achievements"
+    "-l, --list": "api.wotblitz.com/wotb/account/list",
+    "-i, --info": "api.wotblitz.com/wotb/account/info",
+    "-a, --achievements": "api.wotblitz.com/wotb/account/achievements"
   },
   "tankopedia": {
-    "vehicles": "api.wotblitz.com/wotb/encyclopedia/vehicles",
-    "characteristics": "api.wotblitz.com/wotb/encyclopedia/vehicleprofiles",
-    "modules": "api.wotblitz.com/wotb/encyclopedia/modules",
-    "equipment": "api.wotblitz.com/wotb/encyclopedia/provisions",
-    "info": "api.wotblitz.com/wotb/encyclopedia/info"
+    "-v, --vehicles": "api.wotblitz.com/wotb/encyclopedia/vehicles",
+    "-c, --characteristics": "api.wotblitz.com/wotb/encyclopedia/vehicleprofiles",
+    "-m, --modules": "api.wotblitz.com/wotb/encyclopedia/modules",
+    "-e, --equipment": "api.wotblitz.com/wotb/encyclopedia/provisions",
+    "-i, --info": "api.wotblitz.com/wotb/encyclopedia/info"
   },
   "tankRecords": {
-    "stats": "api.wotblitz.com/wotb/tanks/stats",
-    "achievements": "api.wotblitz.com/wotb/tanks/achievements"
+    "-s, --stats": "api.wotblitz.com/wotb/tanks/stats",
+    "-a, --achievements": "api.wotblitz.com/wotb/tanks/achievements"
   }
 }

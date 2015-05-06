@@ -1,20 +1,28 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Originally copied from: 
 # https://raw.githubusercontent.com/tj/commander.js/c6c84726050b19c0373de27cd359f3baddff579f/test/run 
 # See license at https://github.com/tj/commander.js/blob/c6c84726050b19c0373de27cd359f3baddff579f/LICENSE
 
+STDERR=$(mktemp -t "wotblitz-test-stderr.XXXXXXX")
+function cleanup() {
+  rm -f "$STDERR";
+}
+
+trap 'printf "\e[31m	Unexpected exit...\e[0m\n"; cleanup' SIGHUP SIGINT SIGKILL SIGTERM
+
 export NODE_ENV=test
 
-echo
 for file in $@; do
-  printf "\033[90m   ${file#test/}\033[0m "
-  node $file 2> /tmp/stderr && echo "\033[36m✓\033[0m"
+  printf "\e[90m	${file#test/}\e[0m "
+  node $file 2> $STDERR && printf "\e[32m✓\e[0m\n"
   code=$?
   if test $code -ne 0; then
-    echo "\033[31m✖\033[0m"
-    cat /tmp/stderr >&2
+    printf "\e[31m✖\e[0m\n"
+    cat $STDERR >&2
     exit $code
   fi
 done
 echo
+
+cleanup

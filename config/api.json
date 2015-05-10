@@ -17,7 +17,7 @@
     "info": "api.wotblitz.com/wotb/encyclopedia/info"
   },
   "tankRecords": {
-    "stats": "api.wotblitz.com/wotb/encyclopedia/info",
+    "stats": "api.wotblitz.com/wotb/tanks/stats",
     "achievements": "api.wotblitz.com/wotb/tanks/achievements"
   }
 }

@@ -31,7 +31,7 @@ Code Changes
 Other Contributions
 -------------------
 
-All "other contributions" belong on the [World of Tanks Blitz Forum](http://forum.wotblitz.com/).
+All "other contributions" belongs on the [World of Tanks Blitz Forum](http://forum.wotblitz.com/).
 These include but are not limited to the following.
 
 * Personal acheivement discussions - please do link back to [this repository](//github.com/CodeMan99/wotblitz.js)!

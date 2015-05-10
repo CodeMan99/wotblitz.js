@@ -1,4 +1,7 @@
 {
   "application_id": "a125d0975020cd5d594f5b940fdaae60",
-  "account_id": "1009912015"
+  "account_id": "1009912015",
+  "wot_base_uri": "api.worldoftanks.com/wot",
+  "wotb_base_uri": "api.wotblitz.com/wotb",
+  "tailing_slash": true
 }

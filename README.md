@@ -21,3 +21,11 @@ To see an overview, do `wotblitz --help`.
 
 This project uses the Internet Software Consortium (ISC) license unless otherwise
 stated at the top of a file.
+
+More Resources
+--------------
+
+* [Wargaming.net developer room](https://na.wargaming.net/developers/)
+* [Online tankopedia](http://wotblitz.com/encyclopedia/vehicles/)
+* [Community wiki](http://wiki.wargaming.net/en/WoT_Blitz)
+* [Community forum](http://forum.wotblitz.com/)

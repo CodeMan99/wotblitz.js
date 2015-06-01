@@ -16,6 +16,14 @@ Usage
 
 To see an overview, do `wotblitz --help`.
 
+Limitations
+-----------
+
+All data is pulled directly from the API. When in-game items are missing (like a
+new tank line) it is due to the fact that Wargaming does not update the API very
+often. Missing data is out of the control of this application. Any ticket created
+on this topic will be closed with a "wont fix" label.
+
 [License](LICENSE.md)
 ---------------------
 

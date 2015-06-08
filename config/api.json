@@ -19,5 +19,8 @@
   "tankRecords": {
     "stats": "api.wotblitz.com/wotb/tanks/stats",
     "achievements": "api.wotblitz.com/wotb/tanks/achievements"
+  },
+  "servers": {
+    "info": "api.worldoftanks.com/wgn/servers/info"
   }
 }

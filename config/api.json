@@ -1,20 +1,56 @@
 {
   "auth": {
-    "-l, --login": "/auth/login",
-    "-p, --prolongate": "/auth/prolongate",
-    "-q, --logout": "/auth/logout"
+    "hostname": "api.worldoftanks.com",
+    "login": {
+      "path": "/wot/auth/login",
+      "method": "POST"
+    },
+    "prolongate": {
+      "path": "/wot/auth/prolongate",
+      "method": "POST"
+    },
+    "logout": {
+      "path": "/wot/auth/logout",
+      "method": "POST"
+    }
   },
   "account": {
-    "-l, --list": "/account/list",
-    "-i, --info": "/account/info",
-    "-a, --achievements": "/account/achievements"
+    "hostname": "api.wotblitz.com",
+    "list": {
+      "path": "/wotb/account/list",
+      "method": "POST"
+    },
+    "info": {
+      "path": "/wotb/account/info",
+      "method": "POST"
+    }
+    "achievements": {
+      "path": "/wotb/account/achievements",
+      "method": "POST"
+    }
   },
   "tankopedia": {
-    "-v, --vehicles": "/encyclopedia/vehicles",
-    "-c, --characteristics": "/encyclopedia/vehicleprofiles",
-    "-m, --modules": "/encyclopedia/modules",
-    "-e, --equipment": "/encyclopedia/provisions",
-    "-i, --info": "/encyclopedia/info"
+    "hostname": "api.wotblitz.com",
+    "vehicles": {
+      "path": "/wotb/encyclopedia/vehicles",
+      "method": "POST"
+    },
+    "characteristics": {
+      "path": "/wotb/encyclopedia/vehicleprofiles",
+      "method": "POST"
+    },
+    "modules": {
+      "path": "/wotb/encyclopedia/modules",
+      "method": "POST"
+    },
+    "equipment": {
+      "path": "/wotb/encyclopedia/provisions",
+      "method": "POST"
+    },
+    "info": {
+      "path": "/wotb/encyclopedia/info",
+      "method": "POST"
+    }
   },
   "tankRecords": {
     "-s, --stats": "/tanks/stats",

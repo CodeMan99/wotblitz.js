@@ -53,10 +53,21 @@
     }
   },
   "tankRecords": {
-    "-s, --stats": "/tanks/stats",
-    "-a, --achievements": "/tanks/achievements"
+    "hostname": "api.wotblitz.com",
+    "stats": {
+      "path": "/wotb/tanks/stats",
+      "method": "POST"
+    }
+    "achievements": {
+      "path": "/wotb/tanks/achievements",
+      "method": "POST"
+    }
   },
   "servers": {
-    "-i, --info": "/servers/info"
+    "hostname": "api.worldoftanks.com",
+    "info": {
+      "path": "/wgn/servers/info",
+      "method": "POST"
+    }
   }
 }

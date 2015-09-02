@@ -21,11 +21,15 @@ main(
   program
     .version('wotblitz.js version ' + config.pkg.version)
     .option('-v, --verbose', 'output more information, like debugging values')
+    .option('-p, --players', 'search all players')
     .parse(process.argv)
 );
 
 function main(options) {
   if (options.verbose) {
     console.log(JSON.stringify(config, null, 2));
+  }
+  if (options.players) {
+    players.list('hello', console.log);
   }
 }

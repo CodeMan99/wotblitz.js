@@ -2,71 +2,71 @@
   "auth": {
     "hostname": "api.worldoftanks.com",
     "login": {
-      "path": "/wot/auth/login",
+      "path": "/wot/auth/login/",
       "method": "POST"
     },
     "prolongate": {
-      "path": "/wot/auth/prolongate",
+      "path": "/wot/auth/prolongate/",
       "method": "POST"
     },
     "logout": {
-      "path": "/wot/auth/logout",
+      "path": "/wot/auth/logout/",
       "method": "POST"
     }
   },
   "account": {
     "hostname": "api.wotblitz.com",
     "list": {
-      "path": "/wotb/account/list",
+      "path": "/wotb/account/list/",
       "method": "POST"
     },
     "info": {
-      "path": "/wotb/account/info",
+      "path": "/wotb/account/info/",
       "method": "POST"
     },
     "achievements": {
-      "path": "/wotb/account/achievements",
+      "path": "/wotb/account/achievements/",
       "method": "POST"
     }
   },
   "tankopedia": {
     "hostname": "api.wotblitz.com",
     "vehicles": {
-      "path": "/wotb/encyclopedia/vehicles",
+      "path": "/wotb/encyclopedia/vehicles/",
       "method": "POST"
     },
     "characteristics": {
-      "path": "/wotb/encyclopedia/vehicleprofiles",
+      "path": "/wotb/encyclopedia/vehicleprofiles/",
       "method": "POST"
     },
     "modules": {
-      "path": "/wotb/encyclopedia/modules",
+      "path": "/wotb/encyclopedia/modules/",
       "method": "POST"
     },
     "equipment": {
-      "path": "/wotb/encyclopedia/provisions",
+      "path": "/wotb/encyclopedia/provisions/",
       "method": "POST"
     },
     "info": {
-      "path": "/wotb/encyclopedia/info",
+      "path": "/wotb/encyclopedia/info/",
       "method": "POST"
     }
   },
   "tankRecords": {
     "hostname": "api.wotblitz.com",
     "stats": {
-      "path": "/wotb/tanks/stats",
+      "path": "/wotb/tanks/stats/",
       "method": "POST"
     },
     "achievements": {
-      "path": "/wotb/tanks/achievements",
+      "path": "/wotb/tanks/achievements/",
       "method": "POST"
     }
   },
   "servers": {
     "hostname": "api.worldoftanks.com",
     "info": {
-      "path": "/wgn/servers/info",
+      "path": "/wgn/servers/info/",
       "method": "POST"
     }
   }

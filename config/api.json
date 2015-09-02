@@ -23,7 +23,7 @@
     "info": {
       "path": "/wotb/account/info",
       "method": "POST"
-    }
+    },
     "achievements": {
       "path": "/wotb/account/achievements",
       "method": "POST"
@@ -57,7 +57,7 @@
     "stats": {
       "path": "/wotb/tanks/stats",
       "method": "POST"
-    }
+    },
     "achievements": {
       "path": "/wotb/tanks/achievements",
       "method": "POST"

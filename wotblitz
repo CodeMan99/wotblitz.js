@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+var pkg = require('./package.json');
+
+process.title = pkg.name;
+
+program
+  .version(pkg.name + ' version ' + pkg.version)
+  .command('auth', 'wargaming.net authentication')
+  .command('players', 'player search and overall information')
+  .command('servers', 'blitz server status')
+  .command('tank-stats', 'tank statistics and achievements')
+  .command('tankopedia', 'in game tank infomation')
+  .parse(process.argv);
+

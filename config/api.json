@@ -14,7 +14,7 @@
       "method": "POST"
     }
   },
-  "account": {
+  "players": {
     "hostname": "api.wotblitz.com",
     "list": {
       "path": "/wotb/account/list/",
@@ -52,7 +52,7 @@
       "method": "POST"
     }
   },
-  "tankRecords": {
+  "tank-stats": {
     "hostname": "api.wotblitz.com",
     "stats": {
       "path": "/wotb/tanks/stats/",

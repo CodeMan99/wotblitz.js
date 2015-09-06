@@ -22,7 +22,7 @@ main(
 function main(options) {
   list(options.search, function(err, data) {
     if (err) throw err;
-    console.dir(data)
+    console.dir(data);
   });
 }
 

@@ -1,7 +1,11 @@
+#!/usr/bin/env node
+
 var https = require('https');
+var program = require('commander');
 var querystring = require('querystring');
-var config = global.config.api.account;
-var application_id = global.config.app.application_id;
+
+var app_id = require('./config/app.json').application_id;
+var config = require('./config/api.json').players;
 
 module.exports = {
   list: list,
@@ -9,9 +13,22 @@ module.exports = {
   achievements: achievements
 };
 
+main(
+  program
+    .option('-s, --search [name]', 'search for a player')
+    .parse(process.argv)
+);
+
+function main(options) {
+  list(options.search, function(err, data) {
+    if (err) throw err;
+    console.dir(data)
+  });
+}
+
 function list(search, callback) {
   var body = querystring.stringify({
-    application_id: application_id,
+    application_id: app_id,
     search: search
   });
 

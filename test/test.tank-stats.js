@@ -1,5 +1,5 @@
-var should = require('should');
+var test = require('tape');
 
-//wotblitz tanks			#default: --stats
-//wotblitz tanks --stats		#tank stats
-//wotblitz tanks --achievements		#tank achievements
+test('tank-stats', function(t) {
+  t.end();
+});

@@ -1,6 +1,5 @@
-var should = require('should');
+var test = require('tape');
 
-//wotblitz players			#default: --list
-//wotblitz players --list		#players
-//wotblitz players --info		#player personal data
-//wotblitz players --achievements	#player's achievements
+test('players', function(t) {
+  t.end();
+});

@@ -3,6 +3,7 @@
 var https = require('https');
 var program = require('commander');
 var querystring = require('querystring');
+var types = require('./lib/types.js');
 
 var app_id = require('./config/app.json').application_id;
 var config = require('./config/api.json').players;
@@ -15,50 +16,85 @@ module.exports = {
 
 main(
   program
-    .option('-s, --search [name]', 'search for a player')
+    .option('-s, --search <name>', 'search for a player (endpoint)')
+    .option('-i, --info <account_id>', 'player details (endpoint)', types.numbers)
+    .option('-a, --achievements <account_id>', 'achievement details (endpoint)', types.numbers)
+    .option('-f, --fields <fields>', 'the fields to select of the endpoint', types.fields, [])
+    .option('-t, --token <access_token>', 'an authentication token', null)
     .parse(process.argv)
 );
 
-function main(options) {
-  list(options.search, function(err, data) {
-    if (err) throw err;
-    console.dir(data)
-  });
+function main(opts) {
+  if (opts.search) list(opts.search, _dir);
+
+  if (opts.info) info(opts.info, opts.fields, opts.token, _dir);
+
+  if (opts.achievements) achievements(opts.achievements, _dir);
+}
+
+function _dir(err, data) {
+  if (err) throw err;
+  console.dir(data, {colors: true, depth: 3});
 }
 
 function list(search, callback) {
-  var body = querystring.stringify({
+  var request = _createRequest('list', {
     application_id: app_id,
     search: search
   });
 
-  var options = config.list;
+  _doRequest(request.options, request.body, function(err, data) {
+    if (err) return callback(err);
+    callback(null, data.data);
+  });
+}
+
+function info(account_ids, fields, access_token, callback) {
+  var request = _createRequest('info', {
+    application_id: app_id,
+    access_token: access_token,
+    account_id: account_ids.join(','),
+    fields: fields.join(',')
+  });
+
+  _doRequest(request.options, request.body, function(err, data) {
+    if (err) return callback(err);
+    callback(null, data.data);
+  });
+}
+
+function achievements(account_ids, callback) {
+  var request = _createRequest('achievements', {
+    application_id: app_id,
+    account_id: account_ids.join(',')
+  });
+
+  _doRequest(request.options, request.body, function(err, data) {
+    if (err) return callback(err);
+    callback(null, data.data);
+  });
+}
+
+function _createRequest(endpoint, body) {
+  body = querystring.stringify(body);
+
+  var options = config[endpoint];
   options.hostname = config.hostname;
   options.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Content-Length': body.length
   };
 
-  request_collect(options, body, function(err, data) {
-    if (err) return callback(err);
-
-    callback(null, JSON.parse(data).data);
-  });
+  return {body: body, options: options};
 }
 
-function info() {
-}
-
-function achievements() {
-}
-
-function request_collect(options, body, callback) {
+function _doRequest(options, body, callback) {
   var req = https.request(options, function(response) {
     var data = [];
     response.setEncoding('utf8');
     response.on('data', Array.prototype.push.bind(data));
     response.on('end', function() {
-      callback(null, data.join(''));
+      callback(null, JSON.parse(data.join('')));
     });
   });
 

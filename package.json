@@ -4,7 +4,8 @@
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "wotblitz.js",
   "scripts": {
-    "test": "tape test/test.*.js | faucet"
+    "test": "tape test/test.*.js | faucet",
+    "lint": "eslint -f tap wotblitz wotblitz-* lib test | faucet"
   },
   "repository": {
     "type": "git",

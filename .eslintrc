@@ -1,5 +1,12 @@
 {
   "env": {
     "node": true
+  },
+  "ecmaFeatures": {
+    "modules": true
+  },
+  "rules": {
+    "semi": [2, "always"],
+    "quotes": [2, "single"]
   }
 }

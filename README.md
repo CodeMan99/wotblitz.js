@@ -1,4 +1,4 @@
-wotblitz
+wotblitz [![Build Status](https://travis-ci.org/CodeMan99/wotblitz.js.svg?branch=master)](https://travis-ci.org/CodeMan99/wotblitz.js)
 ========
 
 A simple command line utility to make using the

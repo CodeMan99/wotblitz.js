@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-var http = require('http');
-
 module.exports = Authorization;
 
 function Authorization(config, session) {

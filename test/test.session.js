@@ -1,5 +1,5 @@
 var test = require('tape');
 
-test('session', function(t) {
+test('session', function session1(t) {
   t.end();
 });

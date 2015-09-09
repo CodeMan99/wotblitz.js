@@ -1,5 +1,5 @@
 var test = require('tape');
 
-test('formatter', function(t) {
+test('formatter', function formatter1(t) {
   t.end();
 });

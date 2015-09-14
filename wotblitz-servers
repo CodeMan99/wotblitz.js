@@ -3,44 +3,28 @@
 // hook up commander for the help chain
 require('commander').parse(process.argv);
 
-var https = require('https');
-var querystring = require('querystring');
+var request = require('./lib/request.js')('servers');
 
-var config = require('./config/api.json').servers;
-var appId = require('./config/app.json').application_id;
-
-var body = querystring.stringify({
-  application_id: appId,
-  game: 'wotb'
-});
-
-var options = config.info;
-
-options.hostname = config.hostname;
-options.headers = {
-  'Content-Type': 'x-www-form-urlencoded',
-  'Content-Length': body.length
+module.exports = {
+  info: info
 };
 
-var request = https.request(options, function createRequestCb(response) {
-  var data = [];
+main();
 
-  if (!('x-api-version' in response.headers)) {
-    console.error('ERROR: No API version found in response headers');
-  } else if (response.headers['x-api-version'].substr(0, 2) !== '2.') {
-    console.warn('WARNING: May break because the API version does not match');
-  }
+function main() {
+  info(_dir);
+}
 
-  response.setEncoding('utf8');
-  response.on('data', Array.prototype.push.bind(data));
-  response.on('end', function responseEndedCb() {
-    console.dir(JSON.parse(data.join('')).data.wotb, {colors: true});
+function _dir(err, data) {
+  if (err) return console.error(err.stack);
+  console.dir(data, {colors: true});
+}
+
+function info(callback) {
+  request('info', {
+    game: 'wotb'
+  }, function infoRequestCb(err, data) {
+    if (err) return callback(err);
+    callback(null, data.data.wotb);
   });
-});
-
-request.on('error', function requestErrorCb(err) {
-  console.error(err.stack);
-});
-
-request.write(body);
-request.end();
+}

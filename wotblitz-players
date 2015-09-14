@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 
-var https = require('https');
 var program = require('commander');
-var querystring = require('querystring');
+var request = require('./lib/request.js')('players');
 var types = require('./lib/types.js');
-
-var appId = require('./config/app.json').application_id;
-var config = require('./config/api.json').players;
 
 module.exports = {
   list: list,
@@ -38,69 +34,30 @@ function _dir(err, data) {
 }
 
 function list(search, callback) {
-  var request = _createRequest('list', {
-    application_id: appId,
+  request('list', {
     search: search
-  });
-
-  _doRequest(request.options, request.body, function listDoRequestCb(err, data) {
+  }, function listRequestCb(err, data) {
     if (err) return callback(err);
     callback(null, data.data);
   });
 }
 
 function info(accountIds, fields, accessToken, callback) {
-  var request = _createRequest('info', {
-    application_id: appId,
+  request('info', {
     access_token: accessToken,
     account_id: accountIds.join(','),
     fields: fields.join(',')
-  });
-
-  _doRequest(request.options, request.body, function infoDoRequestCb(err, data) {
+  }, function infoRequestCb(err, data) {
     if (err) return callback(err);
     callback(null, data.data);
   });
 }
 
 function achievements(accountIds, callback) {
-  var request = _createRequest('achievements', {
-    application_id: appId,
+  request('achievements', {
     account_id: accountIds.join(',')
-  });
-
-  _doRequest(request.options, request.body, function achievementsDoRequestCb(err, data) {
+  }, function achievementsRequestCb(err, data) {
     if (err) return callback(err);
     callback(null, data.data);
   });
-}
-
-function _createRequest(endpoint, body) {
-  body = querystring.stringify(body);
-
-  var options = config[endpoint];
-
-  options.hostname = config.hostname;
-  options.headers = {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Content-Length': body.length
-  };
-
-  return {body: body, options: options};
-}
-
-function _doRequest(options, body, callback) {
-  var req = https.request(options, function httpsRequestCb(response) {
-    var data = [];
-
-    response.setEncoding('utf8');
-    response.on('data', Array.prototype.push.bind(data));
-    response.on('end', function httpsRequestEndCb() {
-      callback(null, JSON.parse(data.join('')));
-    });
-  });
-
-  req.on('error', callback);
-  req.write(body);
-  req.end();
 }

@@ -1,5 +1,5 @@
 var test = require('tape');
 
-test('servers', function servers1(t) {
+test.skip('servers', function servers1(t) {
   t.end();
 });

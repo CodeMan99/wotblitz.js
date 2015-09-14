@@ -1,5 +1,5 @@
 var test = require('tape');
 
-test('session', function session1(t) {
+test.skip('session', function session1(t) {
   t.end();
 });

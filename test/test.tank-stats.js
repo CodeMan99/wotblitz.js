@@ -1,5 +1,5 @@
 var test = require('tape');
 
-test('tank-stats', function tankStats1(t) {
+test.skip('tank-stats', function tankStats1(t) {
   t.end();
 });

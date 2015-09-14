@@ -10,15 +10,17 @@ module.exports = {
   achievements: achievements
 };
 
-main(
-  program
-    .option('-s, --search <name>', 'search for a player (endpoint)')
-    .option('-i, --info <account_id>', 'player details (endpoint)', types.numbers)
-    .option('-a, --achievements <account_id>', 'achievement details (endpoint)', types.numbers)
-    .option('-f, --fields <fields>', 'the fields to select of the endpoint', types.fields, [])
-    .option('-t, --token <access_token>', 'an authentication token', null)
-    .parse(process.argv)
-);
+if (require.main === module) {
+  main(
+    program
+      .option('-s, --search <name>', 'search for a player (endpoint)')
+      .option('-i, --info <account_id>', 'player details (endpoint)', types.numbers)
+      .option('-a, --achievements <account_id>', 'achievement details (endpoint)', types.numbers)
+      .option('-f, --fields <fields>', 'the fields to select of the endpoint', types.fields, [])
+      .option('-t, --token <access_token>', 'an authentication token', null)
+      .parse(process.argv)
+  );
+}
 
 function main(opts) {
   if (opts.search) list(opts.search, _dir);

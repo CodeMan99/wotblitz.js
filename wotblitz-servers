@@ -9,7 +9,9 @@ module.exports = {
   info: info
 };
 
-main();
+if (require.main === module) {
+  main();
+}
 
 function main() {
   info(_dir);

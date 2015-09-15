@@ -27,11 +27,17 @@ if (require.main === module) {
 }
 
 function main(opts) {
-  if (opts.login) login(opts.port, _dir);
+  session.load(function authSessionLoad(err, sess) {
+    if (err) throw err;
 
-  if (opts.prolongate) prolongate(_dir);
+    // always return to only allow one request to avoid race conditions on save
 
-  if (opts.logout) logout(_dir);
+    if (opts.login) return login(opts.port, sess, _dir);
+
+    if (opts.prolongate) return prolongate(sess, _dir);
+
+    if (opts.logout) return logout(sess, _dir);
+  });
 }
 
 function _dir(err, data) {
@@ -40,7 +46,11 @@ function _dir(err, data) {
   console.dir(data, {colors: true});
 }
 
-function login(port, callback) {
+function login(port, sess, callback) {
+  if (sess.auth !== null && sess.auth.expires_at > (Date.now() / 1000)) {
+    return callback(new Error('already logged in, use prolongate'));
+  }
+
   var getAuthQuery = http.createServer(function singleRequest(req, res) {
     var authQuery = url.parse(req.url, true).query;
     var html;
@@ -50,17 +60,11 @@ function login(port, callback) {
     delete authQuery[''];
     switch (authQuery.status) {
     case 'ok':
-      session.load(function loginSessionLoadCb(loadErr, sess) {
-        if (loadErr) return callback(loadErr);
-
-        sess.account_id = authQuery.account_id;
-        sess.auth = authQuery;
-
-        sess.save(function loginSessionSaveCb(saveErr) {
-          if (saveErr) return callback(saveErr);
-
-          callback(null, sess);
-        });
+      sess.account_id = authQuery.account_id;
+      sess.auth = authQuery;
+      sess.save(function loginSessionSaveCb(saveErr) {
+        if (saveErr) return callback(saveErr);
+        callback(null, sess);
       });
 
       html = util.format(template, 'Successful', 'Successful', 'You may close this tab safely.');
@@ -106,51 +110,36 @@ function login(port, callback) {
   });
 }
 
-function prolongate(callback) {
-  session.load(function prolongateSessionLoadCb(loadErr, sess) {
-    if (loadErr) return callback(loadErr);
+function prolongate(sess, callback) {
+  if (sess.auth === null) return callback(new Error('must login first'));
 
-    if (sess.auth === null) return callback(new Error('must login first'));
+  request('prolongate', {
+    access_token: sess.auth.access_token,
+    expires_at: 14 * 24 * 60 * 60 // 14 days in seconds
+  }, function prolongateRequestCb(requestErr, res) {
+    if (requestErr) return callback(requestErr);
 
-    request('prolongate', {
-      access_token: sess.auth.access_token,
-      expires_at: 14 * 24 * 60 * 60 // 14 days in seconds
-    }, function prolongateRequestCb(requestErr, res) {
-      if (requestErr) return callback(requestErr);
-
-      switch (res.status) {
-      case 'ok':
-        sess.auth.access_token = res.data.access_token;
-        sess.auth.expires_at = res.data.expires_at.toString();
-        sess.save(function prolongateSessionSaveCb(saveErr) {
-          if (saveErr) return callback(saveErr);
-          callback(null, sess);
-        });
-        break;
-      case 'error':
-        callback(new Error(res.error.message));
-        break;
-      }
+    sess.auth.access_token = res.data.access_token;
+    sess.auth.expires_at = res.data.expires_at.toString();
+    sess.save(function prolongateSessionSaveCb(saveErr) {
+      if (saveErr) return callback(saveErr);
+      callback(null, sess);
     });
   });
 }
 
-function logout(callback) {
-  session.load(function logoutSessionLoadCb(loadErr, sess) {
-    if (loadErr) return callback(loadErr);
+function logout(sess, callback) {
+  if (sess.auth === null) return callback(null, sess);
 
-    if (sess.auth === null) return callback(null, sess);
+  request('logout', {
+    access_token: sess.auth.access_token
+  }, function logoutRequestCb(requestErr) {
+    if (requestErr) return callback(requestErr);
 
-    request('logout', {
-      access_token: sess.auth.access_token
-    }, function logoutRequestCb(requestErr) {
-      if (requestErr) return callback(requestErr);
-
-      sess.auth = null;
-      sess.save(function logoutSessionSaveCb(saveErr) {
-        if (saveErr) return callback(saveErr);
-        callback(null, sess);
-      });
+    sess.auth = null;
+    sess.save(function logoutSessionSaveCb(saveErr) {
+      if (saveErr) return callback(saveErr);
+      callback(null, sess);
     });
   });
 }

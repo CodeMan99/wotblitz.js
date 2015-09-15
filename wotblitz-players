@@ -46,12 +46,12 @@ function list(search, sess, callback) {
     search: search
   }, function listRequestCb(err, data) {
     if (err) return callback(err);
-    if (data.data.length !== 1) return callback(null, data.data);
+    if (data.length !== 1) return callback(null, data);
 
-    sess.account_id = data.data[0].account_id;
+    sess.account_id = data[0].account_id;
     sess.save(function searchSessionSaveCb(saveErr) {
       if (saveErr) return callback(saveErr);
-      callback(null, data.data, sess);
+      callback(null, data, sess);
     });
   });
 }
@@ -64,17 +64,11 @@ function info(accountIds, fields, sess, callback) {
 
   if (sess.auth !== null) body.access_token = sess.auth.access_token;
 
-  request('info', body, function infoRequestCb(err, data) {
-    if (err) return callback(err);
-    callback(null, data.data);
-  });
+  request('info', body, callback);
 }
 
 function achievements(accountIds, sess, callback) {
   request('achievements', {
     account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id
-  }, function achievementsRequestCb(err, data) {
-    if (err) return callback(err);
-    callback(null, data.data);
-  });
+  }, callback);
 }

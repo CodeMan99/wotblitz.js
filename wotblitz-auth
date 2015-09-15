@@ -100,7 +100,7 @@ function login(port, sess, callback) {
       return callback(requestErr);
     }
 
-    var browser = opener(data.data.location);
+    var browser = opener(data.location);
 
     childProcess.spawn(browser.command, browser.args, {
       detached: true,
@@ -115,11 +115,11 @@ function prolongate(sess, callback) {
   request('prolongate', {
     access_token: sess.auth.access_token,
     expires_at: 14 * 24 * 60 * 60 // 14 days in seconds
-  }, function prolongateRequestCb(requestErr, res) {
+  }, function prolongateRequestCb(requestErr, data) {
     if (requestErr) return callback(requestErr);
 
-    sess.auth.access_token = res.data.access_token;
-    sess.auth.expires_at = res.data.expires_at.toString();
+    sess.auth.access_token = data.access_token;
+    sess.auth.expires_at = data.expires_at.toString();
     sess.save(function prolongateSessionSaveCb(saveErr) {
       if (saveErr) return callback(saveErr);
       callback(null, sess);

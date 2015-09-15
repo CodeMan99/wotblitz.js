@@ -1,21 +1,156 @@
 #!/usr/bin/env node
 
-module.exports = Authorization;
+var childProcess = require('child_process');
+var http = require('http');
+var opener = require('opener2');
+var program = require('commander');
+var request = require('./lib/request.js')('auth');
+var session = require('./lib/session.js');
+var url = require('url');
+var util = require('util');
 
-function Authorization(config, session) {
-  this.config = config;
-  this.session = session;
+module.exports = {
+  login: login,
+  prolongate: prolongate,
+  logout: logout
+};
 
-  this.login = login.bind(this);
-  this.prolongate = prolongate.bind(this);
-  this.logout = logout.bind(this);
+if (require.main === module) {
+  main(
+    program
+      .option('-l, --login', 'login with your wargaming account (endpoint)')
+      .option('-p, --prolongate', 'login will expire, extend it (endpoint)')
+      .option('-q, --logout', 'revoke your current login (endpoint)')
+      .option('-P, --port <NUM>', 'set port number for login listening [default: 8000]', Number, 8000)
+      .parse(process.argv)
+  );
 }
 
-function login() {
+function main(opts) {
+  if (opts.login) login(opts.port, _dir);
+
+  if (opts.prolongate) prolongate(_dir);
+
+  if (opts.logout) logout(_dir);
 }
 
-function prolongate() {
+function _dir(err, data) {
+  if (err) return console.error(err.stack);
+
+  console.dir(data, {colors: true});
 }
 
-function logout() {
+function login(port, callback) {
+  var getAuthQuery = http.createServer(function singleRequest(req, res) {
+    var authQuery = url.parse(req.url, true).query;
+    var html;
+    var template = '<!DOCTYPE html><html lang="en-US"><head><title>Login %s' +
+        '</title></head><body><h1>Login %s</h1><p>%s</p></html>';
+
+    delete authQuery[''];
+    switch (authQuery.status) {
+    case 'ok':
+      session.load(function loginSessionLoadCb(loadErr, sess) {
+        if (loadErr) return callback(loadErr);
+
+        sess.account_id = authQuery.account_id;
+        sess.auth = authQuery;
+
+        sess.save(function loginSessionSaveCb(saveErr) {
+          if (saveErr) return callback(saveErr);
+
+          callback(null, sess);
+        });
+      });
+
+      html = util.format(template, 'Successful', 'Successful', 'You may close this tab safely.');
+      break;
+    case 'error':
+      callback(new Error(authQuery.message));
+      html = util.format(template, 'Failed', 'Failed: '.concat(authQuery.code), authQuery.message);
+      break;
+    default:
+      // maybe a favicon.ico request, toss it regardless
+      return;
+    }
+
+    res.writeHead(200, 'OK', {
+      'Content-Type': 'text/html',
+      'Content-Length': html.length
+    });
+    res.write(html);
+    res.end();
+
+    req.connection.end();
+    req.connection.destroy();
+    getAuthQuery.close();
+  });
+
+  getAuthQuery.listen(port);
+
+  request('login', {
+    nofollow: 1,
+    redirect_uri: 'http://localhost:'.concat(port)
+  }, function loginRequestCb(requestErr, data) {
+    if (requestErr) {
+      getAuthQuery.close();
+      return callback(requestErr);
+    }
+
+    var browser = opener(data.data.location);
+
+    childProcess.spawn(browser.command, browser.args, {
+      detached: true,
+      stdio: 'ignore'
+    });
+  });
+}
+
+function prolongate(callback) {
+  session.load(function prolongateSessionLoadCb(loadErr, sess) {
+    if (loadErr) return callback(loadErr);
+
+    if (sess.auth === null) return callback(new Error('must login first'));
+
+    request('prolongate', {
+      access_token: sess.auth.access_token,
+      expires_at: 14 * 24 * 60 * 60 // 14 days in seconds
+    }, function prolongateRequestCb(requestErr, res) {
+      if (requestErr) return callback(requestErr);
+
+      switch (res.status) {
+      case 'ok':
+        sess.auth.access_token = res.data.access_token;
+        sess.auth.expires_at = res.data.expires_at.toString();
+        sess.save(function prolongateSessionSaveCb(saveErr) {
+          if (saveErr) return callback(saveErr);
+          callback(null, sess);
+        });
+        break;
+      case 'error':
+        callback(new Error(res.error.message));
+        break;
+      }
+    });
+  });
+}
+
+function logout(callback) {
+  session.load(function logoutSessionLoadCb(loadErr, sess) {
+    if (loadErr) return callback(loadErr);
+
+    if (sess.auth === null) return callback(null, sess);
+
+    request('logout', {
+      access_token: sess.auth.access_token
+    }, function logoutRequestCb(requestErr) {
+      if (requestErr) return callback(requestErr);
+
+      sess.auth = null;
+      sess.save(function logoutSessionSaveCb(saveErr) {
+        if (saveErr) return callback(saveErr);
+        callback(null, sess);
+      });
+    });
+  });
 }

@@ -41,9 +41,8 @@ function main(opts) {
 }
 
 function _dir(err, data) {
-  if (err) return console.error(err.stack);
-
-  console.dir(data, {colors: true});
+  if (err) throw err;
+  console.dir(data, {colors: process.stdout.isTTY});
 }
 
 function login(port, sess, callback) {

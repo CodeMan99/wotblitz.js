@@ -37,8 +37,8 @@ function main(opts) {
 }
 
 function _dir(err, data) {
-  if (err) return console.error(err.stack);
-  console.dir(data, {colors: true, depth: 3});
+  if (err) throw err;
+  console.dir(data, {colors: process.stdout.isTTY, depth: 3});
 }
 
 function list(search, sess, callback) {

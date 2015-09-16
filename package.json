@@ -1,6 +1,6 @@
 {
   "name": "wotblitz",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "wotblitz.js",
   "scripts": {
@@ -24,7 +24,9 @@
   },
   "homepage": "https://github.com/CodeMan99/wotblitz.js",
   "dependencies": {
-    "commander": "^2.8.1"
+    "commander": "^2.8.1",
+    "opener2": "^2.0.1",
+    "osenv": "^0.1.3"
   },
   "devDependencies": {
     "eslint": "^1.3.1",

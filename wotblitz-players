@@ -2,6 +2,7 @@
 
 var program = require('commander');
 var request = require('./lib/request.js')('players');
+var session = require('./lib/session.js');
 var types = require('./lib/types.js');
 
 module.exports = {
@@ -14,52 +15,60 @@ if (require.main === module) {
   main(
     program
       .option('-s, --search <name>', 'search for a player (endpoint)')
-      .option('-i, --info <account_id>', 'player details (endpoint)', types.numbers)
-      .option('-a, --achievements <account_id>', 'achievement details (endpoint)', types.numbers)
+      .option('-i, --info [account_id]', 'player details (endpoint)', types.numbers)
+      .option('-a, --achievements [account_id]', 'achievement details (endpoint)', types.numbers)
       .option('-f, --fields <fields>', 'the fields to select of the endpoint', types.fields, [])
-      .option('-t, --token <access_token>', 'an authentication token', null)
       .parse(process.argv)
   );
 }
 
 function main(opts) {
-  if (opts.search) list(opts.search, _dir);
+  session.load(function playersSessionLoad(err, sess) {
+    if (err) throw err;
 
-  if (opts.info) info(opts.info, opts.fields, opts.token, _dir);
+    // always return to only allow one request to avoid race conditions on save
 
-  if (opts.achievements) achievements(opts.achievements, _dir);
+    if (opts.search) return list(opts.search, sess, _dir);
+
+    if (opts.info) return info(opts.info, opts.fields, sess, _dir);
+
+    if (opts.achievements) return achievements(opts.achievements, sess, _dir);
+  });
 }
 
 function _dir(err, data) {
-  if (err) return console.error(err.stack);
-  console.dir(data, {colors: true, depth: 3});
+  if (err) throw err;
+  console.dir(data, {colors: process.stdout.isTTY, depth: 3});
 }
 
-function list(search, callback) {
+function list(search, sess, callback) {
   request('list', {
     search: search
   }, function listRequestCb(err, data) {
     if (err) return callback(err);
-    callback(null, data.data);
+    if (data.length !== 1) return callback(null, data);
+
+    sess.account_id = data[0].account_id;
+    sess.save(function searchSessionSaveCb(saveErr) {
+      if (saveErr) return callback(saveErr);
+      callback(null, data, sess);
+    });
   });
 }
 
-function info(accountIds, fields, accessToken, callback) {
-  request('info', {
-    access_token: accessToken,
-    account_id: accountIds.join(','),
+function info(accountIds, fields, sess, callback) {
+  var body =  {
+    account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id,
     fields: fields.join(',')
-  }, function infoRequestCb(err, data) {
-    if (err) return callback(err);
-    callback(null, data.data);
-  });
+  };
+
+  if (sess.isLoggedIn()) body.access_token = sess.auth.access_token;
+
+  request('info', body, callback);
 }
 
-function achievements(accountIds, callback) {
+function achievements(accountIds, sess, callback) {
   request('achievements', {
-    account_id: accountIds.join(',')
-  }, function achievementsRequestCb(err, data) {
-    if (err) return callback(err);
-    callback(null, data.data);
-  });
+    account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id
+  }, callback);
 }

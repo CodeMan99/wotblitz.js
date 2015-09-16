@@ -18,8 +18,8 @@ function main() {
 }
 
 function _dir(err, data) {
-  if (err) return console.error(err.stack);
-  console.dir(data, {colors: true});
+  if (err) throw err;
+  console.dir(data, {colors: process.stdout.isTTY});
 }
 
 function info(callback) {
@@ -27,6 +27,6 @@ function info(callback) {
     game: 'wotb'
   }, function infoRequestCb(err, data) {
     if (err) return callback(err);
-    callback(null, data.data.wotb);
+    callback(null, data.wotb);
   });
 }

@@ -78,7 +78,7 @@ function characteristics(tankId, isDefault, fields, callback) {
 
 function modules(moduleIds, fields, callback) {
   request('modules', {
-    module_id: typeof modulesIds === 'object' ? modulesIds.join(',') : null,
+    module_id: typeof moduleIds === 'object' ? moduleIds.join(',') : null,
     fields: fields.join(',')
   }, callback);
 }
@@ -88,7 +88,7 @@ function provisions(provisionIds, tankIds, type, fields, callback) {
     provision_id: typeof provisionIds === 'object' ? provisionIds.join(',') : null,
     tank_id: tankIds.join(','),
     type: type,
-    fields: fields.join(','),
+    fields: fields.join(',')
   }, callback);
 }
 

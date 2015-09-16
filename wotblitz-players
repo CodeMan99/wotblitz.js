@@ -57,7 +57,7 @@ function list(search, sess, callback) {
 }
 
 function info(accountIds, fields, sess, callback) {
-  var body =  {
+  var body = {
     account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id,
     fields: fields.join(',')
   };

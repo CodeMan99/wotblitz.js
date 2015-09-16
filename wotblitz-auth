@@ -46,7 +46,7 @@ function _dir(err, data) {
 }
 
 function login(port, sess, callback) {
-  if (sess.auth !== null && sess.auth.expires_at > (Date.now() / 1000)) {
+  if (sess.isLoggedIn()) {
     return callback(new Error('already logged in, use prolongate'));
   }
 
@@ -110,7 +110,7 @@ function login(port, sess, callback) {
 }
 
 function prolongate(sess, callback) {
-  if (sess.auth === null) return callback(new Error('must login first'));
+  if (!sess.isLoggedIn()) return callback(new Error('must login first'));
 
   request('prolongate', {
     access_token: sess.auth.access_token,
@@ -128,7 +128,7 @@ function prolongate(sess, callback) {
 }
 
 function logout(sess, callback) {
-  if (sess.auth === null) return callback(null, sess);
+  if (!sess.isLoggedIn()) return callback(null, sess);
 
   request('logout', {
     access_token: sess.auth.access_token

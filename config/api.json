@@ -43,7 +43,7 @@
       "path": "/wotb/encyclopedia/modules/",
       "method": "POST"
     },
-    "equipment": {
+    "provisions": {
       "path": "/wotb/encyclopedia/provisions/",
       "method": "POST"
     },

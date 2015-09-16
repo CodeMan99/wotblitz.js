@@ -2,7 +2,8 @@
   "name": "wotblitz",
   "version": "0.0.3",
   "description": "A command line interface to access the World of Tank Blitz API.",
-  "main": "wotblitz.js",
+  "main": "./wotblitz",
+  "bin": "./wotblitz",
   "scripts": {
     "test": "faucet test/test.*.js",
     "lint": "eslint -f tap wotblitz wotblitz-* lib test | faucet"

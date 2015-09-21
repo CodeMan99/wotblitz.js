@@ -26,3 +26,16 @@ test('types.modules', function types3(t) {
   t.throws(types.modules.bind(null, 'a4'), Error, 'parse error - unknown letter');
   t.end();
 });
+
+test('types.provision', function types4(t) {
+  t.equal(types.provision('e'), 'equipment', '"e" for equipment');
+  t.equal(types.provision('E'), 'equipment', '"E" for equipment');
+  t.equal(types.provision('equipment'), 'equipment', 'the whole word for equipment');
+  t.equal(types.provision('o'), 'optionalDevice', '"o" for optionalDevice');
+  t.equal(types.provision('O'), 'optionalDevice', '"O" for optionalDevice');
+  t.equal(types.provision('optionalDevice'), 'optionalDevice', 'the whole word for optionalDevice');
+  t.doesNotThrow(types.provision, 'no argument does not throw an error');
+  t.equal(types.provision(''), null, 'empty string means null');
+  t.throws(types.provision.bind(null, 'x'), Error, 'unknown provision type throws an error');
+  t.end();
+});

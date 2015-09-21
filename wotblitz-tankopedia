@@ -24,7 +24,7 @@ if (require.main === module) {
       .option('-t, --tank-ids <tank_ids>', 'selection of tank_id(s)', types.numbers, [])
       .option('-f, --fields <fields>', 'selection of field(s)', types.fields, [])
       .option('-d, --default', 'show only the default characteristics')
-      .option('-T, --provision-type <equipment|optionalDevice>', 'select equipment or consumable', /^(e|o)/i, '')
+      .option('-T, --provision-type <equipment|optionalDevice>', 'select equipment or consumable', '')
       .parse(process.argv)
   );
 }
@@ -37,7 +37,7 @@ function main(opts) {
 
   if (opts.modules) modules(opts.modules, opts.fields, _dir);
 
-  var type = '';
+  var type = null;
 
   switch (opts.provisionType[0]) {
   case 'E':
@@ -48,6 +48,13 @@ function main(opts) {
   case 'o':
     type = 'optionalDevice';
     break;
+  default:
+    if (opts.provisionType === '') break;
+    console.error();
+    console.error('  error: option `-T, --provision-type <equipement|optionalDevice>\' invalid argument');
+    console.error();
+    process.exitCode = 1;
+    return;
   }
 
   if (opts.provisions) provisions(opts.provisions, opts.tankIds, type, opts.fields, _dir);

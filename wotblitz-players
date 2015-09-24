@@ -18,6 +18,7 @@ if (require.main === module) {
       .option('-i, --info [account_id]', 'player details (endpoint)', types.numbers)
       .option('-a, --achievements [account_id]', 'achievement details (endpoint)', types.numbers)
       .option('-f, --fields <fields>', 'the fields to select of the endpoint', types.fields, [])
+      .option('--no-save', 'turn off saving account_id when search returns one item')
       .parse(process.argv)
   );
 }
@@ -28,7 +29,7 @@ function main(opts) {
 
     // always return to only allow one request to avoid race conditions on save
 
-    if (opts.search) return list(opts.search, sess, _dir);
+    if (opts.search) return list(opts.search, opts.save ? sess : null, _dir);
 
     if (opts.info) return info(opts.info, opts.fields, sess, _dir);
 
@@ -45,6 +46,7 @@ function list(search, sess, callback) {
   request('list', {
     search: search
   }, function listRequestCb(err, data) {
+    if (!sess) return callback(err, data);
     if (err) return callback(err);
     if (data.length !== 1) return callback(null, data);
 

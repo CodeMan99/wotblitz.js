@@ -3,5 +3,5 @@ module.exports = {
   players: require('./wotblitz-players'),
   servers: require('./wotblitz-servers'),
   tankopedia: require('./wotblitz-tankopedia'),
-  'tank-stats': require('./wotblitz-tank-stats')
+  tankStats: require('./wotblitz-tank-stats')
 };

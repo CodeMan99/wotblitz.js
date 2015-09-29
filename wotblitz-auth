@@ -39,6 +39,7 @@ function main(opts) {
 
     if (opts.logout) return logout(sess, _dir);
 
+    // use _dir for color logic
     if (opts.when) return _dir(null, sess.expiresAt());
   });
 }

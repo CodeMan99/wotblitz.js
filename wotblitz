@@ -8,6 +8,7 @@ process.title = pkg.name;
 program
   .version(pkg.name + ' version ' + pkg.version)
   .command('auth', 'wargaming.net authentication')
+  .command('clans', 'clan seach and overall information')
   .command('players', 'player search and overall information')
   .command('servers', 'blitz server status')
   .command('tank-stats', 'tank statistics and achievements')

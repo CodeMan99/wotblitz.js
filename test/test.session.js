@@ -52,3 +52,17 @@ test('loaded Session.prototype.save', function session4(t) {
     });
   });
 });
+
+test('Session.prototype.expiresAt', function session5(t) {
+  var sess = new session.Session(null, null);
+
+  t.throws(sess.expiresAt, Error, 'a null session throws an error');
+
+  sess.auth = {};
+  sess.auth.expires_at = 1;
+
+  // using timespan because `new Date(1000) === new Date(1000)` is false?
+  t.equal(sess.expiresAt() - new Date(1000), 0, 'a set session has definite expiration');
+
+  t.end();
+});

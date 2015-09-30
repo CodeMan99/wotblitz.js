@@ -26,7 +26,7 @@ if (require.main === module) {
       .option('-t, --tank-ids <tank_ids>', 'selection of tank_id(s)', types.numbers, [])
       .option('-f, --fields <fields>', 'selection of field(s)', types.fields, [])
       .option('-d, --default', 'show only the default characteristics')
-      .option('-T, --provision-type <equipment|optionalDevice>', 'select equipment or consumable', types.provision)
+      .option('-T, --provision-type <equipment|optionalDevice>', 'select consumable or equipment', types.provision)
       .option('-M, --module <[estg]number>', 'select which module to equip for characteric', types.modules, {})
       .parse(process.argv)
   );

@@ -40,7 +40,7 @@
       "method": "POST"
     },
     "characteristic": {
-      "path": "/wotb/encyclopedia/vehiclesprofile/",
+      "path": "/wotb/encyclopedia/vehicleprofile/",
       "method": "POST"
     },
     "modules": {

@@ -39,6 +39,10 @@
       "path": "/wotb/encyclopedia/vehicleprofiles/",
       "method": "POST"
     },
+    "characteristic": {
+      "path": "/wotb/encyclopedia/vehicleprofile/",
+      "method": "POST"
+    },
     "modules": {
       "path": "/wotb/encyclopedia/modules/",
       "method": "POST"
@@ -49,6 +53,25 @@
     },
     "info": {
       "path": "/wotb/encyclopedia/info/",
+      "method": "POST"
+    }
+  },
+  "clans": {
+    "hostname": "api.wotblitz.com",
+    "list": {
+      "path": "/wotb/clans/list/",
+      "method": "POST"
+    },
+    "info": {
+      "path": "/wotb/clans/info/",
+      "method": "POST"
+    },
+    "accountinfo": {
+      "path": "/wotb/clans/accountinfo/",
+      "method": "POST"
+    },
+    "glossary": {
+      "path": "/wotb/clans/glossary/",
       "method": "POST"
     }
   },

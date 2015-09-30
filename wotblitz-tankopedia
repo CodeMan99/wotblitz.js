@@ -7,6 +7,7 @@ var types = require('./lib/types.js');
 module.exports = {
   vehicles: vehicles,
   characteristics: characteristics,
+  characteristic: characteristic,
   modules: modules,
   provisions: provisions,
   info: info
@@ -16,7 +17,8 @@ if (require.main === module) {
   main(
     program
       .option('-v, --vehicles [tank_ids]', 'list of vehicles with default profile (endpoint)', types.numbers)
-      .option('-c, --characteristics <tank_id>', 'all or default characteristics of one tank (endpoint)', Number)
+      .option('--characteristics <tank_id>', '[DEPRECATED] all or default characteristics of one tank (endpoint)', Number)
+      .option('-c, --characteristic <tank_id>', 'get the characterists given the module ids (endpoint)', Number)
       .option('-m, --modules [module_ids]', 'list of available modules, such as guns, engines, etc. (endpoint)', types.numbers)
       .option('-p, --provisions [provision_ids]', 'list of available equipment and consumables (endpoint)', types.numbers)
       .option('-i, --info', 'overview of the tankopedia (endpoint)')
@@ -24,7 +26,8 @@ if (require.main === module) {
       .option('-t, --tank-ids <tank_ids>', 'selection of tank_id(s)', types.numbers, [])
       .option('-f, --fields <fields>', 'selection of field(s)', types.fields, [])
       .option('-d, --default', 'show only the default characteristics')
-      .option('-T, --provision-type <equipment|optionalDevice>', 'select equipment or consumable', /^(e|o)/i, '')
+      .option('-T, --provision-type <equipment|optionalDevice>', 'select consumable or equipment', types.provision)
+      .option('-M, --module <[estg]number>', 'select which module to equip for characteric', types.modules, {})
       .parse(process.argv)
   );
 }
@@ -35,22 +38,21 @@ function main(opts) {
   // opts.default HACKS: commander does not specify values for on-off flags
   if (opts.characteristics) characteristics(opts.characteristics, Number(opts.default || false), opts.fields, _dir);
 
-  if (opts.modules) modules(opts.modules, opts.fields, _dir);
-
-  var type = '';
-
-  switch (opts.provisionType[0]) {
-  case 'E':
-  case 'e':
-    type = 'equipment';
-    break;
-  case 'O':
-  case 'o':
-    type = 'optionalDevice';
-    break;
+  if (opts.characteristic) {
+    characteristic(
+      opts.characteristic,
+      opts.module.engine,
+      opts.module.gun,
+      opts.module.suspension,
+      opts.module.turret,
+      opts.fields,
+      _dir
+    );
   }
 
-  if (opts.provisions) provisions(opts.provisions, opts.tankIds, type, opts.fields, _dir);
+  if (opts.modules) modules(opts.modules, opts.fields, _dir);
+
+  if (opts.provisions) provisions(opts.provisions, opts.tankIds, opts.provisionType, opts.fields, _dir);
 
   if (opts.info) info(opts.fields, _dir);
 }
@@ -72,6 +74,18 @@ function characteristics(tankId, isDefault, fields, callback) {
   request('characteristics', {
     tank_id: tankId,
     is_default: isDefault,
+    fields: fields.join(',')
+  }, callback);
+  console.warn('WARN: Method has been deprecated for removal.');
+}
+
+function characteristic(tankId, engineId, gunId, suspensionId, turretId, fields, callback) {
+  request('characteristic', {
+    tank_id: tankId,
+    engine_id: engineId,
+    gun_id: gunId,
+    suspension_id: suspensionId,
+    turret_id: turretId,
     fields: fields.join(',')
   }, callback);
 }

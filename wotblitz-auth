@@ -21,6 +21,7 @@ if (require.main === module) {
       .option('-l, --login', 'login with your wargaming account (endpoint)')
       .option('-p, --prolongate', 'login will expire, extend it (endpoint)')
       .option('-q, --logout', 'revoke your current login (endpoint)')
+      .option('-w, --when', 'get the date when the session expires')
       .option('-P, --port <NUM>', 'set port number for login listening [default: 8000]', Number, 8000)
       .parse(process.argv)
   );
@@ -37,6 +38,9 @@ function main(opts) {
     if (opts.prolongate) return prolongate(sess, _dir);
 
     if (opts.logout) return logout(sess, _dir);
+
+    // use _dir for color logic
+    if (opts.when) return _dir(null, sess.expiresAt());
   });
 }
 

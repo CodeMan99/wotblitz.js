@@ -22,5 +22,7 @@ test('types.modules', function types3(t) {
   t.deepEqual(types.modules('t3'), {turret: 3}, 'parse a turret id');
   t.deepEqual(types.modules('s4'), {suspension: 4}, 'parse a suspension id');
   t.deepEqual(types.modules('e1', {gun: 2}), {gun: 2, engine: 1}, 'parse with a memo');
+  t.throws(types.modules.bind(null, 'e2r'), Error, 'parse error - number not at the end of the string');
+  t.throws(types.modules.bind(null, 'a4'), Error, 'parse error - unknown letter');
   t.end();
 });

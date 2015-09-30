@@ -41,10 +41,10 @@ function main(opts) {
   if (opts.characteristic) {
     characteristic(
       opts.characteristic,
-      opts.module.engine || null,
-      opts.module.gun || null,
-      opts.module.suspension || null,
-      opts.module.turret || null,
+      opts.module.engine,
+      opts.module.gun,
+      opts.module.suspension,
+      opts.module.turret,
       opts.fields,
       _dir
     );

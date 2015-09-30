@@ -26,7 +26,7 @@ if (require.main === module) {
       .option('-t, --tank-ids <tank_ids>', 'selection of tank_id(s)', types.numbers, [])
       .option('-f, --fields <fields>', 'selection of field(s)', types.fields, [])
       .option('-d, --default', 'show only the default characteristics')
-      .option('-T, --provision-type <equipment|optionalDevice>', 'select equipment or consumable', /^(e|o)/i, '')
+      .option('-T, --provision-type <equipment|optionalDevice>', 'select consumable or equipment', types.provision)
       .option('-M, --module <[estg]number>', 'select which module to equip for characteric', types.modules, {})
       .parse(process.argv)
   );
@@ -52,20 +52,7 @@ function main(opts) {
 
   if (opts.modules) modules(opts.modules, opts.fields, _dir);
 
-  var type = '';
-
-  switch (opts.provisionType[0]) {
-  case 'E':
-  case 'e':
-    type = 'equipment';
-    break;
-  case 'O':
-  case 'o':
-    type = 'optionalDevice';
-    break;
-  }
-
-  if (opts.provisions) provisions(opts.provisions, opts.tankIds, type, opts.fields, _dir);
+  if (opts.provisions) provisions(opts.provisions, opts.tankIds, opts.provisionType, opts.fields, _dir);
 
   if (opts.info) info(opts.fields, _dir);
 }

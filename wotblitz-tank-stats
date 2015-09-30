@@ -45,7 +45,7 @@ function stats(accountId, tankIds, inGarage, fields, sess, callback) {
     tank_id: tankIds.join(','),
     in_garage: inGarage,
     fields: fields.join(','),
-    access_token: sess.isLoggedIn() ? sess.auth.access_token : null
+    access_token: sess && sess.isLoggedIn() ? sess.auth.access_token : null
   }, callback);
 }
 
@@ -55,6 +55,6 @@ function achievements(accountId, tankIds, inGarage, fields, sess, callback) {
     tank_id: tankIds.join(','),
     in_garage: inGarage,
     fields: fields.join(','),
-    access_token: sess.isLoggedIn() ? sess.auth.access_token : null
+    access_token: sess && sess.isLoggedIn() ? sess.auth.access_token : null
   }, callback);
 }

@@ -64,7 +64,7 @@ function info(accountIds, fields, sess, callback) {
     fields: fields.join(',')
   };
 
-  if (sess.isLoggedIn()) body.access_token = sess.auth.access_token;
+  if (sess && sess.isLoggedIn()) body.access_token = sess.auth.access_token;
 
   request('info', body, callback);
 }

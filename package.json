@@ -7,7 +7,7 @@
   "preferGlobal": true,
   "scripts": {
     "test": "faucet test/test.*.js",
-    "lint": "eslint -f tap wotblitz wotblitz-* lib test | faucet"
+    "lint": "eslint -f tap index.js wotblitz wotblitz-* lib test | faucet"
   },
   "repository": {
     "type": "git",

@@ -23,8 +23,8 @@ if (require.main === module) {
       .option('-l, --limit <number>', 'limit the clan search results', Number, null)
       .option('-p, --page <number>', 'page through clan search results', Number, 1)
       .option('-e, --extra', 'include more information in "info" and "accountinfo"')
-      // TODO --no-save handling
-      //.option('--no-save', 'turn off saving clan_id for "search" or "accountinfo"')
+      //  TODO --no-save handling
+      // .option('--no-save', 'turn off saving clan_id for "search" or "accountinfo"')
       .parse(process.argv)
   );
 }

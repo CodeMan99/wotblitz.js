@@ -1,8 +1,5 @@
 #!/usr/bin/env node
 
-// hook up commander for the help chain
-require('commander').parse(process.argv);
-
 var request = require('./lib/request.js')('servers');
 
 module.exports = {
@@ -10,6 +7,9 @@ module.exports = {
 };
 
 if (require.main === module) {
+  // hook up commander for the help chain
+  require('commander').parse(process.argv);
+
   main();
 }
 

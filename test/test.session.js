@@ -3,7 +3,7 @@ var fs = require('fs');
 var session = require('../lib/session.js');
 
 test('Session.prototype.isLoggedIn', function session1(t) {
-  var sess = new session.Session(null, null);
+  var sess = new session.Session(null, null, null);
 
   t.equal(sess.isLoggedIn(), false, 'a null session is not logged in');
 
@@ -20,7 +20,7 @@ test('Session.prototype.isLoggedIn', function session1(t) {
 });
 
 test('unloaded Session.prototype.save', function session2(t) {
-  var sess = new session.Session(null, null);
+  var sess = new session.Session(null, null, null);
 
   sess.save(function testSessionSave2(err) {
     t.equal(
@@ -39,6 +39,7 @@ test('session.load, no file', function session3(t) {
       t.error(err, 'session load should not errer even if there is not a file');
       t.equal(sess.auth, null, 'sess.auth should be null without a file');
       t.equal(sess.account_id, null, 'sess.account_id should be null without a file');
+      t.equal(sess.clan_id, null, 'sess.clan_id should be null without a file');
       t.end();
     });
   });

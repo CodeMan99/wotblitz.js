@@ -2,6 +2,7 @@
 
 var program = require('commander');
 var request = require('./lib/request.js')('clans');
+var session = require('./lib/session.js');
 var types = require('./lib/types.js');
 
 module.exports = {
@@ -15,8 +16,8 @@ if (require.main === module) {
   main(
     program
       .option('-s, --search <name|tag>', 'Part of name or tag for clan search (endpoint)')
-      .option('-i, --info <clan_ids>', 'Detailed clan information (endpoint)', types.numbers)
-      .option('-a, --accountinfo <account_ids>', 'Player clan data (endpoint)', types.numbers)
+      .option('-i, --info [clan_ids]', 'Detailed clan information (endpoint)', types.numbers)
+      .option('-a, --accountinfo [account_ids]', 'Player clan data (endpoint)', types.numbers)
       .option('-g, --glossary', 'Information on clan entities (endpoint)')
       .option('-f, --fields <fields>', 'selection of fields', types.fields, [])
       .option('-l, --limit <number>', 'limit the clan search results', Number, null)
@@ -27,11 +28,17 @@ if (require.main === module) {
 }
 
 function main(opts) {
-  if (opts.search) list(opts.search, opts.limit, opts.page, opts.fields, _dir);
+  session.load(function clansSessionLoad(err, sess) {
+    if (err) throw err;
 
-  if (opts.info) info(opts.info, opts.extra ? ['members'] : [], opts.fields, _dir);
+    // return to avoid race conditions on save
 
-  if (opts.accountinfo) accountinfo(opts.accountinfo, opts.extra ? ['clan'] : [], opts.fields, _dir);
+    if (opts.search) return list(opts.search, opts.limit, opts.page, opts.fields, sess, _dir);
+
+    if (opts.info) return info(opts.info, opts.extra ? ['members'] : [], opts.fields, sess, _dir);
+
+    if (opts.accountinfo) return accountinfo(opts.accountinfo, opts.extra ? ['clan'] : [], opts.fields, sess, _dir);
+  });
 
   if (opts.glossary) glossary(opts.fields, _dir);
 }
@@ -41,29 +48,56 @@ function _dir(err, data) {
   console.dir(data, {colors: process.stdout.isTTY, depth: 3});
 }
 
-function list(search, limit, pageNumber, fields, callback) {
+function list(search, limit, pageNumber, fields, sess, callback) {
   request('list', {
     search: search,
     limit: limit,
     page_no: pageNumber,
     fields: fields.join(',')
-  }, callback);
+  }, function listRequestCb(requestErr, data) {
+    if (!sess) return callback(requestErr, data);
+    if (requestErr) return callback(requestErr);
+
+    var clanId = data.length === 1 ? data[0].clan_id : null;
+
+    if (!clanId) return callback(null, data);
+
+    sess.clan_id = clanId;
+    sess.save(function listSessionSaveCb(saveErr) {
+      if (saveErr) return callback(saveErr);
+      callback(null, data, sess);
+    });
+  });
 }
 
-function info(clanIds, extra, fields, callback) {
+function info(clanIds, extra, fields, sess, callback) {
   request('info', {
-    clan_id: clanIds.join(','),
+    clan_id: typeof clanIds === 'object' ? clanIds.join(',') : sess.clan_id,
     extra: extra.join(','),
     fields: fields.join(',')
   }, callback);
 }
 
-function accountinfo(accountIds, extra, fields, callback) {
+function accountinfo(accountIds, extra, fields, sess, callback) {
+  if (typeof accountIds !== 'object') accountIds = [sess.account_id];
   request('accountinfo', {
     account_id: accountIds.join(','),
     extra: extra.join(','),
     fields: fields.join(',')
-  }, callback);
+  }, function accountinfoRequestCb(requestErr, data) {
+    if (!sess) return callback(requestErr, data);
+    if (requestErr) return callback(requestErr);
+
+    var clanId = accountIds.length === 1 ? data[accountIds[0]].clan_id : null;
+
+    if (!clanId) return callback(null, data);
+
+    sess.clan_id = clanId;
+    sess.save(function accountinfoSessionSaveCb(saveErr) {
+      if (saveErr) return callback(saveErr);
+      callback(null, data, sess);
+    });
+  });
 }
 
 function glossary(fields, callback) {

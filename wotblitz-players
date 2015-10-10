@@ -4,7 +4,7 @@ var program = require('commander');
 var request = require('./lib/request.js')('players');
 var session = require('./lib/session.js');
 var types = require('./lib/types.js');
-var writer = require('./lib/writer.js')({colors: true, depth: 3, indent: 2});
+var writer = require('./lib/writer.js')({depth: 3});
 
 module.exports = {
   list: list,

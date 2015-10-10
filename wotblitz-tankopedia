@@ -3,7 +3,7 @@
 var program = require('commander');
 var request = require('./lib/request.js')('tankopedia');
 var types = require('./lib/types.js');
-var writer = require('./lib/writer.js')({colors: true, depth: 4, indent: 2});
+var writer = require('./lib/writer.js')({depth: 4});
 
 module.exports = {
   vehicles: vehicles,

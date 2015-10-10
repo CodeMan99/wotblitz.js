@@ -4,6 +4,7 @@ var program = require('commander');
 var pkg = require('./package.json');
 
 process.title = pkg.name;
+process.env.APPLICATION_ID = 'a125d0975020cd5d594f5b940fdaae60';
 
 program
   .version(pkg.name + ' version ' + pkg.version)

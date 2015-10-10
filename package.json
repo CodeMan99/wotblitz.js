@@ -15,10 +15,13 @@
     "url": "https://github.com/CodeMan99/wotblitz.js"
   },
   "keywords": [
-    "wot",
+    "blitz",
     "tank",
     "tanks",
-    "blitz"
+    "wargaming",
+    "wargaming.net",
+    "wot",
+    "wotblitz"
   ],
   "author": "Cody A. Taylor <codemister99@yahoo.com>",
   "license": "ISC",

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var request = require('./lib/request.js')('servers');
+var writer = require('./lib/writer.js')();
 
 module.exports = {
   info: info
@@ -14,12 +15,7 @@ if (require.main === module) {
 }
 
 function main() {
-  info(_dir);
-}
-
-function _dir(err, data) {
-  if (err) throw err;
-  console.dir(data, {colors: process.stdout.isTTY});
+  info(writer.write);
 }
 
 function info(callback) {

@@ -9,12 +9,27 @@ How to Install
 
 Wotblitz is written in [nodejs](https://nodejs.org/), you must install it first.
 Once you have node installed you can run `npm install -g wotblitz`, this will make
-the `wotblitz` command accessable.
+the `wotblitz` command accessible.
 
 Usage
 -----
 
 To see an overview, do `wotblitz --help`.
+
+As a dependency
+---------------
+
+You can `npm install wotblitz --save` to use this package as a library. Provide your
+own application_id by setting `APPLICATION_ID` in your environment.
+
+    $ export APPLICATION_ID=myapplicationid
+    $ head -n 1 myapp.js
+    var wotblitz = require('wotblitz');
+
+A function is returned to set the application_id if none is found in the environment.
+
+    $ head -n 1 myapp.js
+    var wotblitz = require('wotblitz')('myapplicationid');
 
 Limitations
 -----------

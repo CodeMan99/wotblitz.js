@@ -38,7 +38,15 @@ function main(opts) {
 
     if (opts.info) return info(opts.info, opts.extra ? ['members'] : [], opts.fields, sess, writer.callback);
 
-    if (opts.accountinfo) return accountinfo(opts.accountinfo, opts.extra ? ['clan'] : [], opts.fields, sess, writer.callback);
+    if (opts.accountinfo) {
+      return accountinfo(
+        opts.accountinfo,
+        opts.extra ? ['clan'] : [],
+        opts.fields,
+        sess,
+        writer.callback
+      );
+    }
   });
 
   if (opts.glossary) glossary(opts.fields, writer.callback);

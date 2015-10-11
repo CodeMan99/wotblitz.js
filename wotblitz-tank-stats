@@ -31,7 +31,16 @@ function main(opts) {
 
     if (opts.stats) return stats(opts.stats, opts.tankIds, opts.inGarage, opts.fields, sess, writer.callback);
 
-    if (opts.achievements) return achievements(opts.achievements, opts.tankIds, opts.inGarage, opts.fields, sess, writer.callback);
+    if (opts.achievements) {
+      return achievements(
+        opts.achievements,
+        opts.tankIds,
+        opts.inGarage,
+        opts.fields,
+        sess,
+        writer.callback
+      );
+    }
   });
 }
 

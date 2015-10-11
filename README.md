@@ -31,6 +31,15 @@ A function is returned to set the application_id if none is found in the environ
     $ head -n 1 myapp.js
     var wotblitz = require('wotblitz')('myapplicationid');
 
+You may also use the application itself as a dependency. Useful if you are writing a
+project that is not node.
+
+    $ APPLICATION_ID=myapplicationid wotblitz servers | myapp.sh
+
+Note the reason to have your own `APPLICATION_ID` is so that you can release your
+code. If you intend just release the data, then you are within the bounds of the
+terms Wargaming has setup. If you are unsure, please read the agreement yourself.
+
 Limitations
 -----------
 

@@ -30,11 +30,11 @@ function main(opts) {
 
     // always return to only allow one request to avoid race conditions on save
 
-    if (opts.search) return list(opts.search, opts.save ? sess : null, writer.write);
+    if (opts.search) return list(opts.search, opts.save ? sess : null, writer.callback);
 
-    if (opts.info) return info(opts.info, opts.fields, sess, writer.write);
+    if (opts.info) return info(opts.info, opts.fields, sess, writer.callback);
 
-    if (opts.achievements) return achievements(opts.achievements, sess, writer.write);
+    if (opts.achievements) return achievements(opts.achievements, sess, writer.callback);
   });
 }
 

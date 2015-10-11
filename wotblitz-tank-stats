@@ -29,9 +29,18 @@ function main(opts) {
 
     // return to avoid race conditions when saving
 
-    if (opts.stats) return stats(opts.stats, opts.tankIds, opts.inGarage, opts.fields, sess, writer.write);
+    if (opts.stats) return stats(opts.stats, opts.tankIds, opts.inGarage, opts.fields, sess, writer.callback);
 
-    if (opts.achievements) return achievements(opts.achievements, opts.tankIds, opts.inGarage, opts.fields, sess, writer.write);
+    if (opts.achievements) {
+      return achievements(
+        opts.achievements,
+        opts.tankIds,
+        opts.inGarage,
+        opts.fields,
+        sess,
+        writer.callback
+      );
+    }
   });
 }
 

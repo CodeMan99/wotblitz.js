@@ -34,13 +34,13 @@ function main(opts) {
 
     // always return to only allow one request to avoid race conditions on save
 
-    if (opts.login) return login(opts.port, sess, writer.write);
+    if (opts.login) return login(opts.port, sess, writer.callback);
 
-    if (opts.prolongate) return prolongate(sess, writer.write);
+    if (opts.prolongate) return prolongate(sess, writer.callback);
 
-    if (opts.logout) return logout(sess, writer.write);
+    if (opts.logout) return logout(sess, writer.callback);
 
-    if (opts.when) return writer.writeSync(sess.expiresAt()); // eslint-disable-line no-sync
+    if (opts.when) return writer.write(sess.expiresAt());
   });
 }
 

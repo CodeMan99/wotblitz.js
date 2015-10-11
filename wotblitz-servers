@@ -15,7 +15,7 @@ if (require.main === module) {
 }
 
 function main() {
-  info(writer.write);
+  info(writer.callback);
 }
 
 function info(callback) {

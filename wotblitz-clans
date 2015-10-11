@@ -34,14 +34,22 @@ function main(opts) {
 
     // return to avoid race conditions on save
 
-    if (opts.search) return list(opts.search, opts.limit, opts.page, opts.fields, sess, writer.write);
+    if (opts.search) return list(opts.search, opts.limit, opts.page, opts.fields, sess, writer.callback);
 
-    if (opts.info) return info(opts.info, opts.extra ? ['members'] : [], opts.fields, sess, writer.write);
+    if (opts.info) return info(opts.info, opts.extra ? ['members'] : [], opts.fields, sess, writer.callback);
 
-    if (opts.accountinfo) return accountinfo(opts.accountinfo, opts.extra ? ['clan'] : [], opts.fields, sess, writer.write);
+    if (opts.accountinfo) {
+      return accountinfo(
+        opts.accountinfo,
+        opts.extra ? ['clan'] : [],
+        opts.fields,
+        sess,
+        writer.callback
+      );
+    }
   });
 
-  if (opts.glossary) glossary(opts.fields, writer.write);
+  if (opts.glossary) glossary(opts.fields, writer.callback);
 }
 
 function list(search, limit, pageNumber, fields, sess, callback) {

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var request = require('./lib/request.js')('clans');
-var session = require('./lib/session.js');
-var types = require('./lib/types.js');
-var writer = require('./lib/writer.js')({depth: 3});
+var request = require('../lib/request.js')('clans');
+var session = require('../lib/session.js');
+var types = require('../lib/types.js');
+var writer = require('../lib/writer.js')({depth: 3});
 
 module.exports = {
   list: list,

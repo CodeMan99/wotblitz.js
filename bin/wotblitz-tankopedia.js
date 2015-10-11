@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var request = require('./lib/request.js')('tankopedia');
-var types = require('./lib/types.js');
-var writer = require('./lib/writer.js')({depth: 4});
+var request = require('../lib/request.js')('tankopedia');
+var types = require('../lib/types.js');
+var writer = require('../lib/writer.js')({depth: 4});
 
 module.exports = {
   vehicles: vehicles,

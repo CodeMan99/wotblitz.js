@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var pkg = require('./package.json');
+var pkg = require('../package.json');
 
 process.title = pkg.name;
 if (!process.env.APPLICATION_ID) {

@@ -4,6 +4,7 @@ var program = require('commander');
 var request = require('./lib/request.js')('clans');
 var session = require('./lib/session.js');
 var types = require('./lib/types.js');
+var writer = require('./lib/writer.js')({depth: 3});
 
 module.exports = {
   list: list,
@@ -33,19 +34,22 @@ function main(opts) {
 
     // return to avoid race conditions on save
 
-    if (opts.search) return list(opts.search, opts.limit, opts.page, opts.fields, sess, _dir);
+    if (opts.search) return list(opts.search, opts.limit, opts.page, opts.fields, sess, writer.callback);
 
-    if (opts.info) return info(opts.info, opts.extra ? ['members'] : [], opts.fields, sess, _dir);
+    if (opts.info) return info(opts.info, opts.extra ? ['members'] : [], opts.fields, sess, writer.callback);
 
-    if (opts.accountinfo) return accountinfo(opts.accountinfo, opts.extra ? ['clan'] : [], opts.fields, sess, _dir);
+    if (opts.accountinfo) {
+      return accountinfo(
+        opts.accountinfo,
+        opts.extra ? ['clan'] : [],
+        opts.fields,
+        sess,
+        writer.callback
+      );
+    }
   });
 
-  if (opts.glossary) glossary(opts.fields, _dir);
-}
-
-function _dir(err, data) {
-  if (err) throw err;
-  console.dir(data, {colors: process.stdout.isTTY, depth: 3});
+  if (opts.glossary) glossary(opts.fields, writer.callback);
 }
 
 function list(search, limit, pageNumber, fields, sess, callback) {

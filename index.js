@@ -1,11 +1,11 @@
 var wotblitz = {
-  auth: require('./wotblitz-auth'),
-  clans: require('./wotblitz-clans'),
-  players: require('./wotblitz-players'),
-  servers: require('./wotblitz-servers'),
+  auth: require('./bin/wotblitz-auth.js'),
+  clans: require('./bin/wotblitz-clans.js'),
+  players: require('./bin/wotblitz-players.js'),
+  servers: require('./bin/wotblitz-servers.js'),
   session: require('./lib/session.js'),
-  tankopedia: require('./wotblitz-tankopedia'),
-  tankStats: require('./wotblitz-tank-stats')
+  tankopedia: require('./bin/wotblitz-tankopedia.js'),
+  tankStats: require('./bin/wotblitz-tank-stats.js')
 };
 
 module.exports = process.env.APPLICATION_ID ? wotblitz : setAppId;

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var request = require('./lib/request.js')('servers');
-var writer = require('./lib/writer.js')();
+var request = require('../lib/request.js')('servers');
+var writer = require('../lib/writer.js')();
 
 module.exports = {
   info: info

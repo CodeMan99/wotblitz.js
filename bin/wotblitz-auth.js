@@ -4,11 +4,11 @@ var childProcess = require('child_process');
 var http = require('http');
 var opener = require('opener2');
 var program = require('commander');
-var request = require('./lib/request.js')('auth');
-var session = require('./lib/session.js');
+var request = require('../lib/request.js')('auth');
+var session = require('../lib/session.js');
 var url = require('url');
 var util = require('util');
-var writer = require('./lib/writer.js')();
+var writer = require('../lib/writer.js')();
 
 module.exports = {
   login: login,

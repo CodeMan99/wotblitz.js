@@ -1,6 +1,6 @@
 {
   "name": "wotblitz",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "./index.js",
   "bin": "./wotblitz",

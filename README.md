@@ -16,6 +16,73 @@ Usage
 
 To see an overview, do `wotblitz --help`.
 
+Get some clan information, selecting some fields.
+
+    $ wotblitz clans -i 17 -f created_at,name,tag,motto,members_count
+    { '17':
+       { motto: 'Hear the Thunder, Feel the Lightning',
+         tag: 'STORM',
+         members_count: 47,
+         created_at: 1438733647,
+         name: 'Thunderstorm_Division I' } }
+
+Get some player information, deselecting some fields, as JSON.
+
+    $ # note the pipe to cat
+    $ wotblitz players -i 1009912015 \
+    > -f ',-statistics.frags,-statistics.team,-statistics.company' \
+    > -f ',-statistics.clan,-private,-nickname' | cat
+    {
+      "1009912015": {
+        "statistics": {
+          "max_xp_tank_id": 51713,
+          "all": {
+            "spotted": 11598,
+            "max_frags_tank_id": 11777,
+            "hits": 73904,
+            "frags": 7150,
+            "max_xp": 2095,
+            "max_xp_tank_id": 51713,
+            "wins": 4634,
+            "losses": 3522,
+            "capture_points": 9578,
+            "battles": 8286,
+            "damage_dealt": 6972898,
+            "damage_received": 6075113,
+            "max_frags": 7,
+            "shots": 95879,
+            "frags8p": 1149,
+            "xp": 4916318,
+            "win_and_survived": 2563,
+            "survived_battles": 2609,
+            "dropped_capture_points": 17162
+          },
+          "max_xp": 2095
+        },
+        "created_at": 1405533433,
+        "last_battle_time": 1444625817,
+        "account_id": 1009912015,
+        "updated_at": 1444626269
+      }
+    }
+
+Check how many people are on the (NA) wotb server.
+
+    $ wotblitz servers
+    [ { players_online: 3195, server: 'NA' } ]
+
+See what game version the tankopedia is aware of.
+
+    $ wotblitz tankopedia -i -f game_version
+    { game_version: '2.1.0' }
+
+Determine a player's mastery level on a given tank.
+
+    $ wotblitz tank-stats -s 1009912015 -t 1 -f mark_of_mastery
+    { '1009912015': [ { mark_of_mastery: 3 } ] }
+
+Much more is possible, please explore!
+
 As a dependency
 ---------------
 

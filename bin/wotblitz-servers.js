@@ -11,10 +11,6 @@ if (require.main === module) {
   // hook up commander for the help chain
   require('commander').parse(process.argv);
 
-  main();
-}
-
-function main() {
   info(writer.callback);
 }
 

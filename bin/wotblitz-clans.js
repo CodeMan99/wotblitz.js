@@ -76,14 +76,14 @@ function list(search, limit, pageNumber, fields, sess, callback) {
 
 function info(clanIds, extra, fields, sess, callback) {
   request('info', {
-    clan_id: typeof clanIds === 'object' ? clanIds.join(',') : sess.clan_id,
+    clan_id: Array.isArray(clanIds) ? clanIds.join(',') : sess.clan_id,
     extra: extra.join(','),
     fields: fields.join(',')
   }, callback);
 }
 
 function accountinfo(accountIds, extra, fields, sess, callback) {
-  if (typeof accountIds !== 'object') accountIds = [sess.account_id];
+  if (!Array.isArray(accountIds)) accountIds = [sess.account_id];
   request('accountinfo', {
     account_id: accountIds.join(','),
     extra: extra.join(','),

@@ -46,7 +46,7 @@ function main(opts) {
 
 function stats(accountId, tankIds, inGarage, fields, sess, callback) {
   request('stats', {
-    account_id: typeof accountId === 'number' ? accountId : sess.account_id,
+    account_id: Array.isArray(accountId) ? accountId : sess.account_id,
     tank_id: tankIds.join(','),
     in_garage: inGarage,
     fields: fields.join(','),
@@ -56,7 +56,7 @@ function stats(accountId, tankIds, inGarage, fields, sess, callback) {
 
 function achievements(accountId, tankIds, inGarage, fields, sess, callback) {
   request('achievements', {
-    account_id: typeof accountId === 'number' ? accountId : sess.account_id,
+    account_id: Array.isArray(accountId) ? accountId : sess.account_id,
     tank_id: tankIds.join(','),
     in_garage: inGarage,
     fields: fields.join(','),

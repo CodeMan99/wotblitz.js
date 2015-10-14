@@ -56,7 +56,7 @@ function list(search, sess, callback) {
 
 function info(accountIds, fields, sess, callback) {
   request('info', {
-    account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id,
+    account_id: Array.isArray(accountIds) ? accountIds.join(',') : sess.account_id,
     fields: fields.join(','),
     access_token: sess && sess.isLoggedIn() ? sess.auth.access_token : null
   }, callback);
@@ -64,6 +64,6 @@ function info(accountIds, fields, sess, callback) {
 
 function achievements(accountIds, sess, callback) {
   request('achievements', {
-    account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id
+    account_id: Array.isArray(accountIds) ? accountIds.join(',') : sess.account_id
   }, callback);
 }

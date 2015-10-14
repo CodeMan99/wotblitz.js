@@ -79,7 +79,7 @@ function main(opts) {
 
 function vehicles(tankIds, nations, fields, callback) {
   request('vehicles', {
-    tank_id: typeof tankIds === 'object' ? tankIds.join(',') : null,
+    tank_id: Array.isArray(tankIds) ? tankIds.join(',') : null,
     nation: nations.join(','),
     fields: fields.join(',')
   }, callback);
@@ -107,14 +107,14 @@ function characteristic(tankId, engineId, gunId, suspensionId, turretId, fields,
 
 function modules(moduleIds, fields, callback) {
   request('modules', {
-    module_id: typeof moduleIds === 'object' ? moduleIds.join(',') : null,
+    module_id: Array.isArray(moduleIds) ? moduleIds.join(',') : null,
     fields: fields.join(',')
   }, callback);
 }
 
 function provisions(provisionIds, tankIds, type, fields, callback) {
   request('provisions', {
-    provision_id: typeof provisionIds === 'object' ? provisionIds.join(',') : null,
+    provision_id: Array.isArray(provisionIds) ? provisionIds.join(',') : null,
     tank_id: tankIds.join(','),
     type: type,
     fields: fields.join(',')

@@ -1,23 +1,26 @@
 {
   "name": "wotblitz",
-  "version": "0.0.8",
+  "version": "0.1.2",
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "./index.js",
-  "bin": "./wotblitz",
+  "bin": "./bin/wotblitz.js",
   "preferGlobal": true,
   "scripts": {
     "test": "faucet test/test.*.js",
-    "lint": "eslint -f tap wotblitz wotblitz-* lib test | faucet"
+    "lint": "eslint -f tap *.js bin lib test | faucet"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/CodeMan99/wotblitz.js"
   },
   "keywords": [
-    "wot",
+    "blitz",
     "tank",
     "tanks",
-    "blitz"
+    "wargaming",
+    "wargaming.net",
+    "wot",
+    "wotblitz"
   ],
   "author": "Cody A. Taylor <codemister99@yahoo.com>",
   "license": "ISC",

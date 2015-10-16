@@ -4,10 +4,11 @@ var childProcess = require('child_process');
 var http = require('http');
 var opener = require('opener2');
 var program = require('commander');
-var request = require('./lib/request.js')('auth');
-var session = require('./lib/session.js');
+var request = require('../lib/request.js')('auth');
+var session = require('../lib/session.js');
 var url = require('url');
 var util = require('util');
+var writer = require('../lib/writer.js')();
 
 module.exports = {
   login: login,
@@ -33,20 +34,14 @@ function main(opts) {
 
     // always return to only allow one request to avoid race conditions on save
 
-    if (opts.login) return login(opts.port, sess, _dir);
+    if (opts.login) return login(opts.port, sess, writer.callback);
 
-    if (opts.prolongate) return prolongate(sess, _dir);
+    if (opts.prolongate) return prolongate(sess, writer.callback);
 
-    if (opts.logout) return logout(sess, _dir);
+    if (opts.logout) return logout(sess, writer.callback);
 
-    // use _dir for color logic
-    if (opts.when) return _dir(null, sess.expiresAt());
+    if (opts.when) return writer.write(sess.expiresAt());
   });
-}
-
-function _dir(err, data) {
-  if (err) throw err;
-  console.dir(data, {colors: process.stdout.isTTY});
 }
 
 function login(port, sess, callback) {

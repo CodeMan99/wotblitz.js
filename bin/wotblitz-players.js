@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var request = require('./lib/request.js')('players');
-var session = require('./lib/session.js');
-var types = require('./lib/types.js');
+var request = require('../lib/request.js')('players');
+var session = require('../lib/session.js');
+var types = require('../lib/types.js');
+var writer = require('../lib/writer.js')({depth: 3});
 
 module.exports = {
   list: list,
@@ -29,17 +30,12 @@ function main(opts) {
 
     // always return to only allow one request to avoid race conditions on save
 
-    if (opts.search) return list(opts.search, opts.save ? sess : null, _dir);
+    if (opts.search) return list(opts.search, opts.save ? sess : null, writer.callback);
 
-    if (opts.info) return info(opts.info, opts.fields, sess, _dir);
+    if (opts.info) return info(opts.info, opts.fields, sess, writer.callback);
 
-    if (opts.achievements) return achievements(opts.achievements, sess, _dir);
+    if (opts.achievements) return achievements(opts.achievements, sess, writer.callback);
   });
-}
-
-function _dir(err, data) {
-  if (err) throw err;
-  console.dir(data, {colors: process.stdout.isTTY, depth: 3});
 }
 
 function list(search, sess, callback) {
@@ -60,7 +56,7 @@ function list(search, sess, callback) {
 
 function info(accountIds, fields, sess, callback) {
   request('info', {
-    account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id,
+    account_id: Array.isArray(accountIds) ? accountIds.join(',') : sess.account_id,
     fields: fields.join(','),
     access_token: sess && sess.isLoggedIn() ? sess.auth.access_token : null
   }, callback);
@@ -68,6 +64,6 @@ function info(accountIds, fields, sess, callback) {
 
 function achievements(accountIds, sess, callback) {
   request('achievements', {
-    account_id: typeof accountIds === 'object' ? accountIds.join(',') : sess.account_id
+    account_id: Array.isArray(accountIds) ? accountIds.join(',') : sess.account_id
   }, callback);
 }

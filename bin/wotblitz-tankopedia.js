@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var request = require('./lib/request.js')('tankopedia');
-var types = require('./lib/types.js');
+var request = require('../lib/request.js')('tankopedia');
+var types = require('../lib/types.js');
+var writer = require('../lib/writer.js')({depth: 4});
 
 module.exports = {
   vehicles: vehicles,
@@ -17,10 +18,22 @@ if (require.main === module) {
   main(
     program
       .option('-v, --vehicles [tank_ids]', 'list of vehicles with default profile (endpoint)', types.numbers)
-      .option('--characteristics <tank_id>', '[DEPRECATED] all or default characteristics of one tank (endpoint)', Number)
+      .option(
+        '--characteristics <tank_id>',
+        '[DEPRECATED] all or default characteristics of one tank (endpoint)',
+        Number
+      )
       .option('-c, --characteristic <tank_id>', 'get the characterists given the module ids (endpoint)', Number)
-      .option('-m, --modules [module_ids]', 'list of available modules, such as guns, engines, etc. (endpoint)', types.numbers)
-      .option('-p, --provisions [provision_ids]', 'list of available equipment and consumables (endpoint)', types.numbers)
+      .option(
+        '-m, --modules [module_ids]',
+        'list of available modules, such as guns, engines, etc. (endpoint)',
+        types.numbers
+      )
+      .option(
+        '-p, --provisions [provision_ids]',
+        'list of available equipment and consumables (endpoint)',
+        types.numbers
+      )
       .option('-i, --info', 'overview of the tankopedia (endpoint)')
       .option('-n, --nations <nations>', 'selection of nation(s)', types.fields, [])
       .option('-t, --tank-ids <tank_ids>', 'selection of tank_id(s)', types.numbers, [])
@@ -33,10 +46,17 @@ if (require.main === module) {
 }
 
 function main(opts) {
-  if (opts.vehicles) vehicles(opts.vehicles, opts.nations, opts.fields, _dir);
+  if (opts.vehicles) vehicles(opts.vehicles, opts.nations, opts.fields, writer.callback);
 
-  // opts.default HACKS: commander does not specify values for on-off flags
-  if (opts.characteristics) characteristics(opts.characteristics, Number(opts.default || false), opts.fields, _dir);
+  if (opts.characteristics) {
+    characteristics(
+      opts.characteristics,
+      // opts.default HACKS: commander does not specify values for on-off flags
+      Number(opts.default || false),
+      opts.fields,
+      writer.callback
+    );
+  }
 
   if (opts.characteristic) {
     characteristic(
@@ -46,25 +66,20 @@ function main(opts) {
       opts.module.suspension,
       opts.module.turret,
       opts.fields,
-      _dir
+      writer.callback
     );
   }
 
-  if (opts.modules) modules(opts.modules, opts.fields, _dir);
+  if (opts.modules) modules(opts.modules, opts.fields, writer.callback);
 
-  if (opts.provisions) provisions(opts.provisions, opts.tankIds, opts.provisionType, opts.fields, _dir);
+  if (opts.provisions) provisions(opts.provisions, opts.tankIds, opts.provisionType, opts.fields, writer.callback);
 
-  if (opts.info) info(opts.fields, _dir);
-}
-
-function _dir(err, data) {
-  if (err) throw err;
-  console.dir(data, {colors: process.stdout.isTTY, depth: 4});
+  if (opts.info) info(opts.fields, writer.callback);
 }
 
 function vehicles(tankIds, nations, fields, callback) {
   request('vehicles', {
-    tank_id: typeof tankIds === 'object' ? tankIds.join(',') : null,
+    tank_id: Array.isArray(tankIds) ? tankIds.join(',') : null,
     nation: nations.join(','),
     fields: fields.join(',')
   }, callback);
@@ -92,14 +107,14 @@ function characteristic(tankId, engineId, gunId, suspensionId, turretId, fields,
 
 function modules(moduleIds, fields, callback) {
   request('modules', {
-    module_id: typeof moduleIds === 'object' ? moduleIds.join(',') : null,
+    module_id: Array.isArray(moduleIds) ? moduleIds.join(',') : null,
     fields: fields.join(',')
   }, callback);
 }
 
 function provisions(provisionIds, tankIds, type, fields, callback) {
   request('provisions', {
-    provision_id: typeof provisionIds === 'object' ? provisionIds.join(',') : null,
+    provision_id: Array.isArray(provisionIds) ? provisionIds.join(',') : null,
     tank_id: tankIds.join(','),
     type: type,
     fields: fields.join(',')

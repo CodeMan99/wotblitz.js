@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 var program = require('commander');
-var request = require('./lib/request.js')('tank-stats');
-var session = require('./lib/session.js');
-var types = require('./lib/types.js');
+var request = require('../lib/request.js')('tank-stats');
+var session = require('../lib/session.js');
+var types = require('../lib/types.js');
+var writer = require('../lib/writer.js')({depth: 3});
 
 module.exports = {
   stats: stats,
@@ -28,15 +29,19 @@ function main(opts) {
 
     // return to avoid race conditions when saving
 
-    if (opts.stats) return stats(opts.stats, opts.tankIds, opts.inGarage, opts.fields, sess, _dir);
+    if (opts.stats) return stats(opts.stats, opts.tankIds, opts.inGarage, opts.fields, sess, writer.callback);
 
-    if (opts.achievements) return achievements(opts.achievements, opts.tankIds, opts.inGarage, opts.fields, sess, _dir);
+    if (opts.achievements) {
+      return achievements(
+        opts.achievements,
+        opts.tankIds,
+        opts.inGarage,
+        opts.fields,
+        sess,
+        writer.callback
+      );
+    }
   });
-}
-
-function _dir(err, data) {
-  if (err) throw err;
-  console.dir(data, {colors: process.stdout.isTTY, depth: 3});
 }
 
 function stats(accountId, tankIds, inGarage, fields, sess, callback) {

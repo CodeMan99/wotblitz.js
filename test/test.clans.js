@@ -1,7 +1,7 @@
 var test = require('tape');
 
 // TODO inject lib/request.js mocks
-var clans = require('../wotblitz-clans');
+var clans = require('../bin/wotblitz-clans.js');
 
 test('clans', function clans1(t) {
   t.equal(typeof clans, 'object', 'clans is an object');

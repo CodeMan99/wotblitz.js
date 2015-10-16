@@ -1,7 +1,7 @@
 var test = require('tape');
 
 // TODO inject lib/request.js and lib/session.js mocks
-var tankopedia = require('../wotblitz-tankopedia');
+var tankopedia = require('../bin/wotblitz-tankopedia.js');
 
 test('tankopedia', function tankopedia1(t) {
   t.equal(typeof tankopedia, 'object', 'is an object');

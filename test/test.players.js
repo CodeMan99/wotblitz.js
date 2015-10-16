@@ -1,7 +1,7 @@
 var test = require('tape');
 
 // TODO inject lib/request.js and lib/session.js mocks
-var players = require('../wotblitz-players');
+var players = require('../bin/wotblitz-players.js');
 
 test('players', function players1(t) {
   t.equal(typeof players, 'object', 'is an object');

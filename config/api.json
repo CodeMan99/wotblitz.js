@@ -54,6 +54,14 @@
     "info": {
       "path": "/wotb/encyclopedia/info/",
       "method": "POST"
+    },
+    "achievements": {
+      "path": "/wotb/encyclopedia/achievements/",
+      "method": "POST"
+    },
+    "crewskills": {
+      "path": "/wotb/encyclopedia/crewskills/",
+      "method": "POST"
     }
   },
   "clans": {

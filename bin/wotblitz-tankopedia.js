@@ -11,7 +11,9 @@ module.exports = {
   characteristic: characteristic,
   modules: modules,
   provisions: provisions,
-  info: info
+  info: info,
+  achievements: achievements,
+  crewskills: crewskills
 };
 
 if (require.main === module) {
@@ -35,12 +37,15 @@ if (require.main === module) {
         types.numbers
       )
       .option('-i, --info', 'overview of the tankopedia (endpoint)')
+      .option('-a, --achievements', 'description of all achievements (endpoint)')
+      .option('-s, --crewskills [skill_ids]', 'information about crew skills (endpoint)', types.fields)
       .option('-n, --nations <nations>', 'selection of nation(s)', types.fields, [])
       .option('-t, --tank-ids <tank_ids>', 'selection of tank_id(s)', types.numbers, [])
       .option('-f, --fields <fields>', 'selection of field(s)', types.fields, [])
       .option('-d, --default', 'show only the default characteristics')
       .option('-T, --provision-type <equipment|optionalDevice>', 'select consumable or equipment', types.provision)
       .option('-M, --module <[estg]number>', 'select which module to equip for characteric', types.modules, {})
+      .option('-C, --vehicletype <types>', 'select crews skills based on vehicle type(s)', types.list, [])
       .parse(process.argv)
   );
 }
@@ -75,6 +80,10 @@ function main(opts) {
   if (opts.provisions) provisions(opts.provisions, opts.tankIds, opts.provisionType, opts.fields, writer.callback);
 
   if (opts.info) info(opts.fields, writer.callback);
+
+  if (opts.achievements) achievements(opts.fields, writer.callback);
+
+  if (opts.crewskills) crewskills(opts.crewskills, opts.vehicletype, opts.fields, writer.callback);
 }
 
 function vehicles(tankIds, nations, fields, callback) {
@@ -123,6 +132,20 @@ function provisions(provisionIds, tankIds, type, fields, callback) {
 
 function info(fields, callback) {
   request('info', {
+    fields: fields.join(',')
+  }, callback);
+}
+
+function achievements(fields, callback) {
+  request('achievements', {
+    fields: fields.join(',')
+  }, callback);
+}
+
+function crewskills(skillIds, vehicleTypes, fields, callback) {
+  request('crewskills', {
+    skill_id: Array.isArray(skillIds) ? skillIds.join(',') : null,
+    vehicle_type: vehicleTypes.join(','),
     fields: fields.join(',')
   }, callback);
 }

@@ -33,7 +33,9 @@ function main(opts) {
 
     if (opts.search) return list(opts.search, opts.save ? sess : null, writer.callback);
 
-    if (opts.info) return info(opts.info, opts.extra ? ['private.grouped_contacts'] : [], opts.fields, sess, writer.callback);
+    if (opts.info) {
+      return info(opts.info, opts.extra ? ['private.grouped_contacts'] : [], opts.fields, sess, writer.callback);
+    }
 
     if (opts.achievements) return achievements(opts.achievements, sess, writer.callback);
   });

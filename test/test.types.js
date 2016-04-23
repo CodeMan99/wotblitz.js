@@ -39,3 +39,10 @@ test('types.provision', function types4(t) {
   t.throws(types.provision.bind(null, 'x'), Error, 'unknown provision type throws an error');
   t.end();
 });
+
+test('types.list', function types5(t) {
+  t.deepEqual(types.list('first'), ['first'], 'parse one element');
+  t.deepEqual(types.list('First,Second'), ['First', 'Second'], 'parse two elements, maintaining case');
+  t.deepEqual(types.list('First,Second', ['Zero', 'One']), ['Zero', 'One', 'First', 'Second'], 'parse with a memo');
+  t.end();
+});

@@ -19,6 +19,7 @@ function info(callback) {
     game: 'wotb'
   }, function infoRequestCb(err, data) {
     if (err) return callback(err);
+
     callback(null, data.wotb);
   });
 }

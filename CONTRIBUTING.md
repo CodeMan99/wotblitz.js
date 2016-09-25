@@ -1,7 +1,7 @@
 How to Contribute
 =================
 
-Thanks for taking the time to think about improving [wotblitz]!
+Thanks for taking the time to think about improving [wotblitz](//github.com/CodeMan99/wotblitz.js)!
 
 Reporting Problems
 ------------------
@@ -9,7 +9,7 @@ Reporting Problems
 1. Capture the output of the problem(s). Both command line arguments and stdout/stderr.
 2. Put it on a public [gist](//gist.github.com).
 3. Look for an existing [issue](//github.com/CodeMan99/wotblitz.js/issues). Add to any related issue.
-4. Repeats your steps that creates the problem(s).
+4. Repeat your steps that creates the problem(s).
 5. Create a new issue if you haven't reported everything yet.
 6. Include the version of `wotblitz`, `npm`, `node`, and maybe your shell too.
 7. Make sure to link to the gist from step 2. Or if it's really short, a fenced code block is fine.

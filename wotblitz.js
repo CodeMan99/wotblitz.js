@@ -138,7 +138,7 @@ exports.auth = {
 	 */
 	prolongate: function(access_token, expires_at) {
 		return request({
-			hostname: host.wot,
+			hostname: hosts.wot,
 			path: '/wot/auth/prolongate/'
 		}, {
 			access_token: access_token,

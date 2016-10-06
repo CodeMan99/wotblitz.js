@@ -5,7 +5,7 @@
   "main": "./wotblitz.js",
   "scripts": {
     "lint": "eslint -f tap *.js src test | faucet",
-    "repl": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
+    "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
     "test": "faucet test/*.js"
   },
   "repository": {

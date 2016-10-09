@@ -8,8 +8,7 @@ module.exports = request;
 /**
  * Accessor to store a WarGaming developer application_id.
  *
- * When unset the getter will get the value of
- * "APPLICATION_ID" from the environment.
+ * When unset the getter will read "APPLICATION_ID" from the environment.
  *
  * @type {string}
  */

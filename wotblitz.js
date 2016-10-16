@@ -353,12 +353,12 @@ exports.encyclopedia = {
 	 * Characteristics with different vehicle modules installed.
 	 *
 	 * @param {string} tank_id vehicle to select
-	 * @param {string} [profile_id] 
-	 * @param {Object} [modules]
-	 * @param {number} [modules.engine_id]
-	 * @param {number} [modules.gun_id]
-	 * @param {number} [modules.suspension_id]
-	 * @param {number} [modules.turret_id]
+	 * @param {string} [profile_id] shorthand returned by the "vehicleprofiles" route
+	 * @param {Object} [modules] specify modules individually (overrides profile_id)
+	 * @param {number} [modules.engine_id] which engine module to select
+	 * @param {number} [modules.gun_id] which gun module to select
+	 * @param {number} [modules.suspension_id] which suspension module to select
+	 * @param {number} [modules.turret_id] which turret module to select
 	 * @param {string|string[]} [fields] response selection
 	 * @returns {Promise<Object>} resolves to exact vehicle information
 	 */

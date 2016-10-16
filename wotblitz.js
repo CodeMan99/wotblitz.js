@@ -125,7 +125,7 @@ exports.auth = {
 		}, {
 			display: display,
 			expires_at: expires_at,
-			nofollow: typeof nofollow != 'undefined' ? nofollow : 1,
+			nofollow: typeof nofollow !== 'undefined' ? nofollow : 1,
 			redirect_uri: redirect_uri
 		});
 	},

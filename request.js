@@ -18,6 +18,7 @@ Object.defineProperty(request, 'application_id', {
 	get: function() {
 		if (!appId) appId = process.env.APPLICATION_ID;
 		if (!appId) throw new Error('wotblitz/request: no APPLICATION_ID set in the environment');
+
 		return appId;
 	},
 	set: function(value) {
@@ -68,14 +69,13 @@ function request(options, body) {
 
 	body.language = options.language;
 
-	var options;
 	var url = 'https:\/\/' + options.hostname + options.region + options.path;
 
-	if (options.method != 'GET') {
+	if (options.method !== 'GET') {
 		options = {
 			body: querystring.stringify(body),
 			headers: {
-				'content-type': 'application/x-www-form-urlencoded'
+				'Content-Type': 'application/x-www-form-urlencoded'
 			},
 			method: options.method
 		};

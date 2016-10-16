@@ -4,7 +4,7 @@
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "./wotblitz.js",
   "scripts": {
-    "lint": "eslint -f tap *.js src test | faucet",
+    "lint": "eslint -f tap *.js test | faucet",
     "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
     "test": "faucet test/*.js"
   },
@@ -31,7 +31,7 @@
     "node-fetch": "^1.6.3"
   },
   "devDependencies": {
-    "eslint": "^3.6.1",
+    "eslint": "^3.8.0",
     "faucet": "0.0.1",
     "mockery": "^1.7.0",
     "nock": "^8.0.0",

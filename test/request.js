@@ -79,7 +79,7 @@ test('request', t => {
 
 	t.test('response error', st => {
 		var encyclopediaInfo = nock('https:\/\/api.wotblitz.com')
-			.get('/api/encyclopedia/info/')
+			.get('/wotb/encyclopedia/info/')
 			.query({
 				application_id: 'setfromcode',
 				language: 'en',
@@ -97,7 +97,7 @@ test('request', t => {
 
 		request({
 			hostname: 'api.wotblitz',
-			path: '/api/encyclopedia/info/',
+			path: '/wotb/encyclopedia/info/',
 			method: 'GET'
 		}, {
 			fields: 'game'

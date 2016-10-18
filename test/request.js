@@ -21,7 +21,11 @@ test('request', t => {
 	t.equal(request.language, 'en', 'defaults to English language.');
 
 	t.test('response successful', st => {
-		var servers = nock('https:\/\/api.worldoftanks.com')
+		var servers = nock('https:\/\/api.worldoftanks.com', {
+			reqheaders: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			}
+		})
 			.post('/wgn/servers/info/', {
 				application_id: 'setfromcode',
 				language: 'en'

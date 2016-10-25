@@ -119,13 +119,15 @@ exports.auth = {
 	 * @returns {Promise<Object>} resolves to object containing the URL for the login process
 	 */
 	login: function(redirect_uri, nofollow, expires_at, display) {
+		if (!redirect_uri) return Promise.reject(new Error('wotblitz.auth.login: redirect_uri is required'));
+
 		return request({
 			hostname: hosts.wot,
 			path: '/wot/auth/login/'
 		}, {
 			display: display,
 			expires_at: expires_at,
-			nofollow: typeof nofollow !== 'undefined' ? nofollow : 1,
+			nofollow: typeof nofollow === 'undefined' || nofollow ? 1 : 0,
 			redirect_uri: redirect_uri
 		});
 	},
@@ -137,6 +139,8 @@ exports.auth = {
 	 * @returns {Promise<Object>} resolves to the new token and related information
 	 */
 	prolongate: function(access_token, expires_at) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.auth.prolongate: access_token is required'));
+
 		return request({
 			hostname: hosts.wot,
 			path: '/wot/auth/prolongate/'
@@ -152,6 +156,8 @@ exports.auth = {
 	 * @returns {Promise<Object>} resolves to a null value
 	 */
 	logout: function(access_token) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.auth.logout: access_token is required'));
+
 		return request({
 			hostname: hosts.wot,
 			path: '/wot/auth/logout/'
@@ -191,6 +197,8 @@ exports.account = {
 	 * @returns {Promise<Object[]> resolves to an array of matching accounts
 	 */
 	list: function(search, type, limit, fields) {
+		if (!search) return Promise.reject(new Error('wotblitz.account.list: search is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/account/list/'
@@ -211,6 +219,8 @@ exports.account = {
 	 * @returns {Promise<Object>} resolves to object include account dates and statistics
 	 */
 	info: function(account_id, access_token, extra, fields) {
+		if (!account_id) return Promise.reject(new Error('wotblitz.account.info: account_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/account/info/'
@@ -229,6 +239,8 @@ exports.account = {
 	 * @returns {Promise<Object>} resolves to object with achievement details
 	 */
 	achievements: function(account_id, fields) {
+		if (!account_id) return Promise.reject(new Error('wotblitz.account.achievements: account_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/account/achievements/'
@@ -246,6 +258,9 @@ exports.account = {
 	 * @returns {Promise<Object>} resolves to the player(s) stats for the given vehicles
 	 */
 	tankstats: function(account_id, tank_id, fields) {
+		if (!account_id) return Promise.reject(new Error('wotblitz.account.tankstats: account_id is required'));
+		if (!tank_id) return Promise.reject(new Error('wotblitz.account.tankstats: tank_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/account/tankstats/'
@@ -259,9 +274,9 @@ exports.account = {
 
 exports.clans = {
 	/**
-	 * Search for a clan by name or tag.
+	 * List of clans with minimal details.
 	 *
-	 * @param {string} search the text to match by
+	 * @param {string} [search] filter by clan name or tag
 	 * @param {number} [page_no] which page to return, starting at 1
 	 * @param {number} [limit] max count of entries
 	 * @param {string|string[]} [fields] response selection
@@ -287,6 +302,8 @@ exports.clans = {
 	 * @returns {Promise<Object>} resolves to description of the clan(s)
 	 */
 	info: function(clan_id, extra, fields) {
+		if (!clan_id) return Promise.reject(new Error('wotblitz.clans.info: clan_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clans/info/'
@@ -305,6 +322,8 @@ exports.clans = {
 	 * @returns {Promise<Object>} resolve to descriptor of player accounts in regard to their clan
 	 */
 	accountinfo: function(account_id, extra, fields) {
+		if (!account_id) return Promise.reject(new Error('wotblitz.clans.accountinfo: account_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clans/accountinfo/'
@@ -363,6 +382,8 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to exact vehicle information
 	 */
 	vehicleprofile: function(tank_id, profile_id, modules, fields) {
+		if (!tank_id) return Promise.reject(new Error('wotblitz.encyclopedia.vehicleprofile: tank_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/vehicleprofile/'
@@ -464,6 +485,8 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to a series of profile_id and meta information
 	 */
 	vehicleprofiles: function(tank_id, order_by, fields) {
+		if (!tank_id) return Promise.reject(new Error('wotblitz.encyclopedia.vehicleprofiles: tank_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/vehicleprofiles/'
@@ -487,6 +510,8 @@ exports.tanks = {
 	 * @returns {Promise<Object>} resolves to stats of the vehicle(s) achieved by the player
 	 */
 	stats: function(account_id, access_token, tank_id, in_garage, fields) {
+		if (!account_id) return Promise.reject(new Error('wotblitz.tanks.stats: account_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/tanks/stats/'
@@ -509,6 +534,8 @@ exports.tanks = {
 	 * @returns {Promise<Object>} resolves to awards earn on each vehicle
 	 */
 	achievements: function(account_id, access_token, tank_id, in_garage, fields) {
+		if (!account_id) return Promise.reject(new Error('wotblitz.tanks.achievements: account_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/tanks/achievements/'
@@ -541,6 +568,8 @@ exports.clanmessages = {
 	 * @returns {Promise<Object>} resolves to a message board object
 	 */
 	messages: function(access_token, message_id, filters, fields) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.messages: access_token is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/messages/'
@@ -564,6 +593,8 @@ exports.clanmessages = {
 	 * @returns {Promise<Object>} resolves to the `message_id`
 	 */
 	create: function(access_token, title, text, type, importance, expires_at) {
+		if (!expires_at) return Promise.reject(new Error('wotblitz.clanmessages.create: all arguments are required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/create/'
@@ -584,6 +615,8 @@ exports.clanmessages = {
 	 * @returns {Promise<Object>} resolves to an empty object
 	 */
 	'delete': function(access_token, message_id) {
+		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.delete: all arguments are required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/delete/'
@@ -601,6 +634,8 @@ exports.clanmessages = {
 	 * @returns {Promise<Object>} resolves to an empty object
 	 */
 	like: function(access_token, message_id, action) {
+		if (!action) return Promise.reject(new Error('wotblitz.clanmessages.like: all arguments are required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/like/'
@@ -619,6 +654,9 @@ exports.clanmessages = {
 	 * @returns {Promise<Object[]>} resolves to list of by whom and when a like was added
 	 */
 	likes: function(access_token, message_id, fields) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.likes: access_token is required'));
+		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.likes: message_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/likes/'
@@ -641,6 +679,9 @@ exports.clanmessages = {
 	 * @returns {Promise<Object>} resolves to the `message_id`
 	 */
 	update: function(access_token, message_id, title, text, type, importance, expires_at) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.update: access_token is required'));
+		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.update: message_id is required'));
+
 		return request({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/update/'

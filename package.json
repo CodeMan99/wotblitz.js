@@ -1,13 +1,12 @@
 {
   "name": "wotblitz",
-  "version": "0.1.3",
+  "version": "1.0.0",
   "description": "A command line interface to access the World of Tank Blitz API.",
-  "main": "./index.js",
-  "bin": "./bin/wotblitz.js",
-  "preferGlobal": true,
+  "main": "./wotblitz.js",
   "scripts": {
-    "test": "faucet test/test.*.js",
-    "lint": "eslint -f tap *.js bin lib test | faucet"
+    "lint": "eslint -f tap *.js test | faucet",
+    "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
+    "test": "faucet test/*.js"
   },
   "repository": {
     "type": "git",
@@ -29,13 +28,13 @@
   },
   "homepage": "https://github.com/CodeMan99/wotblitz.js",
   "dependencies": {
-    "commander": "^2.8.1",
-    "opener2": "^2.0.1",
-    "os-homedir": "^1.0.1"
+    "node-fetch": "^1.6.3"
   },
   "devDependencies": {
-    "eslint": "^1.3.1",
+    "eslint": "^3.8.0",
     "faucet": "0.0.1",
-    "tape": "^4.2.0"
+    "mockery": "^2.0.0",
+    "nock": "^9.0.0",
+    "tape": "^4.6.2"
   }
 }

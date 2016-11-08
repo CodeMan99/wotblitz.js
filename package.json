@@ -31,10 +31,10 @@
     "node-fetch": "^1.6.3"
   },
   "devDependencies": {
-    "eslint": "^3.9.0",
+    "eslint": "^3.19.0",
     "faucet": "0.0.1",
     "mockery": "^2.0.0",
-    "nock": "^9.0.2",
-    "tape": "^4.6.2"
+    "nock": "^9.0.13",
+    "tape": "^4.6.3"
   }
 }

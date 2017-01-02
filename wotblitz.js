@@ -139,84 +139,6 @@ Object.defineProperties(create, {
 	}
 });
 
-auth = request => ({
-	/**
-	 * Authenticates user based on Wargaming.net ID (OpenID)
-	 *
-	 * @param {string} redirect_uri this is where the user is sent after the login process
-	 * @param {number} [nofollow=1] prevents automatic redirect to the login process
-	 * @param {number} [expires_at] token will expire at this date or time delta in seconds
-	 * @param {string} [display] layout for mobile applications, values can be "page" or "popup"
-	 * @returns {Promise<Object>} resolves to object containing the URL for the login process
-	 */
-	login: function(redirect_uri, nofollow, expires_at, display) {
-		if (!redirect_uri) return Promise.reject(new Error('wotblitz.auth.login: redirect_uri is required'));
-
-		return request.execute({
-			hostname: hosts.wot,
-			path: '/wot/auth/login/'
-		}, {
-			display: display,
-			expires_at: expires_at,
-			nofollow: typeof nofollow === 'undefined' || nofollow ? 1 : 0,
-			redirect_uri: redirect_uri
-		});
-	},
-	/**
-	 * Access token extension
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @param {number} [expires_at] date or time span of expiration (default: 14 days)
-	 * @returns {Promise<Object>} resolves to the new token and related information
-	 */
-	prolongate: function(access_token, expires_at) {
-		if (!access_token) return Promise.reject(new Error('wotblitz.auth.prolongate: access_token is required'));
-
-		return request.execute({
-			hostname: hosts.wot,
-			path: '/wot/auth/prolongate/'
-		}, {
-			access_token: access_token,
-			expires_at: expires_at || 14 * 24 * 60 * 60 // 14 days in seconds
-		});
-	},
-	/**
-	 * Invalidate a token
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @returns {Promise<Object>} resolves to a null value
-	 */
-	logout: function(access_token) {
-		if (!access_token) return Promise.reject(new Error('wotblitz.auth.logout: access_token is required'));
-
-		return request.execute({
-			hostname: hosts.wot,
-			path: '/wot/auth/logout/'
-		}, {
-			access_token: access_token
-		});
-	}
-});
-
-servers = request => ({
-	/**
-	 * Get the number of online for each server of a given game(s)
-	 *
-	 * @param {string|string[]} [game] id or ids, values "wot", "wotb", "wowp"
-	 * @param {string|string[]} [fields] response selection
-	 * @returns {Promise<Object>} resolves to object describing server counts
-	 */
-	info: function(game, fields) {
-		return request.execute({
-			hostname: hosts.wot,
-			path: '/wgn/servers/info/'
-		}, {
-			fields: fields ? fields.toString() : '',
-			game: game ? game.toString() : ''
-		});
-	}
-});
-
 account = request => ({
 	/**
 	 * Search for a player.
@@ -299,6 +221,213 @@ account = request => ({
 			account_id: account_id.toString(),
 			tank_id: tank_id,
 			fields: fields ? fields.toString() : ''
+		});
+	}
+});
+
+auth = request => ({
+	/**
+	 * Authenticates user based on Wargaming.net ID (OpenID)
+	 *
+	 * @param {string} redirect_uri this is where the user is sent after the login process
+	 * @param {number} [nofollow=1] prevents automatic redirect to the login process
+	 * @param {number} [expires_at] token will expire at this date or time delta in seconds
+	 * @param {string} [display] layout for mobile applications, values can be "page" or "popup"
+	 * @returns {Promise<Object>} resolves to object containing the URL for the login process
+	 */
+	login: function(redirect_uri, nofollow, expires_at, display) {
+		if (!redirect_uri) return Promise.reject(new Error('wotblitz.auth.login: redirect_uri is required'));
+
+		return request.execute({
+			hostname: hosts.wot,
+			path: '/wot/auth/login/'
+		}, {
+			display: display,
+			expires_at: expires_at,
+			nofollow: typeof nofollow === 'undefined' || nofollow ? 1 : 0,
+			redirect_uri: redirect_uri
+		});
+	},
+	/**
+	 * Access token extension
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @param {number} [expires_at] date or time span of expiration (default: 14 days)
+	 * @returns {Promise<Object>} resolves to the new token and related information
+	 */
+	prolongate: function(access_token, expires_at) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.auth.prolongate: access_token is required'));
+
+		return request.execute({
+			hostname: hosts.wot,
+			path: '/wot/auth/prolongate/'
+		}, {
+			access_token: access_token,
+			expires_at: expires_at || 14 * 24 * 60 * 60 // 14 days in seconds
+		});
+	},
+	/**
+	 * Invalidate a token
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @returns {Promise<Object>} resolves to a null value
+	 */
+	logout: function(access_token) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.auth.logout: access_token is required'));
+
+		return request.execute({
+			hostname: hosts.wot,
+			path: '/wot/auth/logout/'
+		}, {
+			access_token: access_token
+		});
+	}
+});
+
+clanmessages = request => ({
+	/**
+	 * The text and meta data of all conversation.
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @param {number} [message_id] a specific message
+	 * @param {Object} [filters] options
+	 * @param {number} [filters.page_no] which page
+	 * @param {number} [filters.limit] how many per page
+	 * @param {string|string[]} [filters.order_by] which field(s) to order the response (too many values to list)
+	 * @param {number|date} [filters.expires_before] only messages before this date (unix or ISO)
+	 * @param {number|data} [filters.expires_after] only messages on or after this date (unix or ISO)
+	 * @param {string} [filters.importance] only messages with this level, values "important" or "standard"
+	 * @param {string} [filters.status] only messages with this status, values "active" or "deleted"
+	 * @param {string} [filters.type] only messages of this type, values "general", "training", "meeting", or "battle"
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>} resolves to a message board object
+	 */
+	messages: function(access_token, message_id, filters, fields) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.messages: access_token is required'));
+
+		return request.execute({
+			hostname: hosts.wotb,
+			path: '/wotb/clanmessages/messages/'
+		}, Object.assign({
+			access_token: access_token,
+			message_id: message_id,
+			fields: fields ? fields.toString() : ''
+		}, filters, {
+			order_by: filters && filters.order_by ? filters.order_by.toString() : ''
+		}));
+	},
+	/**
+	 * Post a new message.
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @param {string} title message topic
+	 * @param {string} text message body
+	 * @param {string} type message category, values "general", "training", "meeting", or "battle"
+	 * @param {string} importance values "important" or "standard"
+	 * @param {string} expires_at invalidation date
+	 * @returns {Promise<Object>} resolves to the `message_id`
+	 */
+	create: function(access_token, title, text, type, importance, expires_at) {
+		if (!expires_at) return Promise.reject(new Error('wotblitz.clanmessages.create: all arguments are required'));
+
+		return request.execute({
+			hostname: hosts.wotb,
+			path: '/wotb/clanmessages/create/'
+		}, {
+			access_token: access_token,
+			expires_at: expires_at,
+			importance: importance,
+			text: text,
+			title: title,
+			type: type
+		});
+	},
+	/**
+	 * Remove a message.
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @param {number} message_id exactly this message
+	 * @returns {Promise<Object>} resolves to an empty object
+	 */
+	'delete': function(access_token, message_id) {
+		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.delete: all arguments are required'));
+
+		return request.execute({
+			hostname: hosts.wotb,
+			path: '/wotb/clanmessages/delete/'
+		}, {
+			access_token: access_token,
+			message_id: message_id
+		});
+	},
+	/**
+	 * Set like value on a message.
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @param {number} message_id exactly this message
+	 * @param {string} action literally "add" or "remove"
+	 * @returns {Promise<Object>} resolves to an empty object
+	 */
+	like: function(access_token, message_id, action) {
+		if (!action) return Promise.reject(new Error('wotblitz.clanmessages.like: all arguments are required'));
+
+		return request.execute({
+			hostname: hosts.wotb,
+			path: '/wotb/clanmessages/like/'
+		}, {
+			access_token,
+			action: action,
+			message_id: message_id
+		});
+	},
+	/**
+	 * All likes on a message.
+	 *
+	 * @params {string} access_token user's authentication string
+	 * @params {number} message_id exactly this message
+	 * @params {string|string[]} [fields] response selection
+	 * @returns {Promise<Object[]>} resolves to list of by whom and when a like was added
+	 */
+	likes: function(access_token, message_id, fields) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.likes: access_token is required'));
+		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.likes: message_id is required'));
+
+		return request.execute({
+			hostname: hosts.wotb,
+			path: '/wotb/clanmessages/likes/'
+		}, {
+			access_token: access_token,
+			message_id: message_id,
+			fields: fields ? fields.toString() : ''
+		});
+	},
+	/**
+	 * Change an existing message.
+	 *
+	 * @param {string} access_token user's authentication string
+	 * @params {number} message_id exactly this message
+	 * @param {string} [title] message topic
+	 * @param {string} [text] message body
+	 * @param {string} [type] message category, values "general", "training", "meeting", or "battle"
+	 * @param {string} [importance] values "important" or "standard"
+	 * @param {string} [expires_at] invalidation date
+	 * @returns {Promise<Object>} resolves to the `message_id`
+	 */
+	update: function(access_token, message_id, title, text, type, importance, expires_at) {
+		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.update: access_token is required'));
+		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.update: message_id is required'));
+
+		return request.execute({
+			hostname: hosts.wotb,
+			path: '/wotb/clanmessages/update/'
+		}, {
+			access_token: access_token,
+			expires_at: expires_at,
+			importance: importance,
+			message_id: message_id,
+			text: text,
+			title: title,
+			type: type
 		});
 	}
 });
@@ -529,6 +658,25 @@ encyclopedia = request => ({
 	}
 });
 
+servers = request => ({
+	/**
+	 * Get the number of online for each server of a given game(s)
+	 *
+	 * @param {string|string[]} [game] id or ids, values "wot", "wotb", "wowp"
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>} resolves to object describing server counts
+	 */
+	info: function(game, fields) {
+		return request.execute({
+			hostname: hosts.wot,
+			path: '/wgn/servers/info/'
+		}, {
+			fields: fields ? fields.toString() : '',
+			game: game ? game.toString() : ''
+		});
+	}
+});
+
 tanks = request => ({
 	/**
 	 * General statistics for each vehicle of the player.
@@ -576,154 +724,6 @@ tanks = request => ({
 			tank_id: tank_id ? tank_id.toString() : '',
 			in_garage: in_garage,
 			fields: fields ? fields.toString() : ''
-		});
-	}
-});
-
-clanmessages = request => ({
-	/**
-	 * The text and meta data of all conversation.
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @param {number} [message_id] a specific message
-	 * @param {Object} [filters] options
-	 * @param {number} [filters.page_no] which page
-	 * @param {number} [filters.limit] how many per page
-	 * @param {string|string[]} [filters.order_by] which field(s) to order the response (too many values to list)
-	 * @param {number|date} [filters.expires_before] only messages before this date (unix or ISO)
-	 * @param {number|data} [filters.expires_after] only messages on or after this date (unix or ISO)
-	 * @param {string} [filters.importance] only messages with this level, values "important" or "standard"
-	 * @param {string} [filters.status] only messages with this status, values "active" or "deleted"
-	 * @param {string} [filters.type] only messages of this type, values "general", "training", "meeting", or "battle"
-	 * @param {string|string[]} [fields] response selection
-	 * @returns {Promise<Object>} resolves to a message board object
-	 */
-	messages: function(access_token, message_id, filters, fields) {
-		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.messages: access_token is required'));
-
-		return request.execute({
-			hostname: hosts.wotb,
-			path: '/wotb/clanmessages/messages/'
-		}, Object.assign({
-			access_token: access_token,
-			message_id: message_id,
-			fields: fields ? fields.toString() : ''
-		}, filters, {
-			order_by: filters && filters.order_by ? filters.order_by.toString() : ''
-		}));
-	},
-	/**
-	 * Post a new message.
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @param {string} title message topic
-	 * @param {string} text message body
-	 * @param {string} type message category, values "general", "training", "meeting", or "battle"
-	 * @param {string} importance values "important" or "standard"
-	 * @param {string} expires_at invalidation date
-	 * @returns {Promise<Object>} resolves to the `message_id`
-	 */
-	create: function(access_token, title, text, type, importance, expires_at) {
-		if (!expires_at) return Promise.reject(new Error('wotblitz.clanmessages.create: all arguments are required'));
-
-		return request.execute({
-			hostname: hosts.wotb,
-			path: '/wotb/clanmessages/create/'
-		}, {
-			access_token: access_token,
-			expires_at: expires_at,
-			importance: importance,
-			text: text,
-			title: title,
-			type: type
-		});
-	},
-	/**
-	 * Remove a message.
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @param {number} message_id exactly this message
-	 * @returns {Promise<Object>} resolves to an empty object
-	 */
-	'delete': function(access_token, message_id) {
-		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.delete: all arguments are required'));
-
-		return request.execute({
-			hostname: hosts.wotb,
-			path: '/wotb/clanmessages/delete/'
-		}, {
-			access_token: access_token,
-			message_id: message_id
-		});
-	},
-	/**
-	 * Set like value on a message.
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @param {number} message_id exactly this message
-	 * @param {string} action literally "add" or "remove"
-	 * @returns {Promise<Object>} resolves to an empty object
-	 */
-	like: function(access_token, message_id, action) {
-		if (!action) return Promise.reject(new Error('wotblitz.clanmessages.like: all arguments are required'));
-
-		return request.execute({
-			hostname: hosts.wotb,
-			path: '/wotb/clanmessages/like/'
-		}, {
-			access_token,
-			action: action,
-			message_id: message_id
-		});
-	},
-	/**
-	 * All likes on a message.
-	 *
-	 * @params {string} access_token user's authentication string
-	 * @params {number} message_id exactly this message
-	 * @params {string|string[]} [fields] response selection
-	 * @returns {Promise<Object[]>} resolves to list of by whom and when a like was added
-	 */
-	likes: function(access_token, message_id, fields) {
-		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.likes: access_token is required'));
-		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.likes: message_id is required'));
-
-		return request.execute({
-			hostname: hosts.wotb,
-			path: '/wotb/clanmessages/likes/'
-		}, {
-			access_token: access_token,
-			message_id: message_id,
-			fields: fields ? fields.toString() : ''
-		});
-	},
-	/**
-	 * Change an existing message.
-	 *
-	 * @param {string} access_token user's authentication string
-	 * @params {number} message_id exactly this message
-	 * @param {string} [title] message topic
-	 * @param {string} [text] message body
-	 * @param {string} [type] message category, values "general", "training", "meeting", or "battle"
-	 * @param {string} [importance] values "important" or "standard"
-	 * @param {string} [expires_at] invalidation date
-	 * @returns {Promise<Object>} resolves to the `message_id`
-	 */
-	update: function(access_token, message_id, title, text, type, importance, expires_at) {
-		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.update: access_token is required'));
-		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.update: message_id is required'));
-
-		return request.execute({
-			hostname: hosts.wotb,
-			path: '/wotb/clanmessages/update/'
-		}, {
-			access_token: access_token,
-			expires_at: expires_at,
-			importance: importance,
-			message_id: message_id,
-			text: text,
-			title: title,
-			type: type
 		});
 	}
 });

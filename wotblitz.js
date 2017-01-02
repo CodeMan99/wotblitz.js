@@ -295,7 +295,7 @@ clanmessages = request => ({
 	 * @param {number} [filters.limit] how many per page
 	 * @param {string|string[]} [filters.order_by] which field(s) to order the response (too many values to list)
 	 * @param {number|date} [filters.expires_before] only messages before this date (unix or ISO)
-	 * @param {number|data} [filters.expires_after] only messages on or after this date (unix or ISO)
+	 * @param {number|date} [filters.expires_after] only messages on or after this date (unix or ISO)
 	 * @param {string} [filters.importance] only messages with this level, values "important" or "standard"
 	 * @param {string} [filters.status] only messages with this status, values "active" or "deleted"
 	 * @param {string} [filters.type] only messages of this type, values "general", "training", "meeting", or "battle"

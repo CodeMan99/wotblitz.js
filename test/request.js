@@ -1,7 +1,8 @@
 var nock = require('nock');
 var test = require('tape');
 
-var request = require('../request.js');
+var Request = require('../request.js');
+var request = new Request();
 
 test('request', t => {
 	delete process.env.APPLICATION_ID;
@@ -51,7 +52,7 @@ test('request', t => {
 				}
 			});
 
-		request({
+		request.execute({
 			hostname: 'api.worldoftanks',
 			path: '/wgn/servers/info/'
 		}, {}).then(data => {
@@ -99,7 +100,7 @@ test('request', t => {
 				}
 			});
 
-		request({
+		request.execute({
 			hostname: 'api.wotblitz',
 			path: '/wotb/encyclopedia/info/',
 			method: 'GET'

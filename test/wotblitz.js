@@ -26,7 +26,7 @@ mockery.registerMock('querystring', {
 });
 mockery.enable({useCleanCache: true});
 
-var wotblitz = require('../wotblitz.js');
+var wotblitz = require('../wotblitz.js')();
 
 mockery.disable();
 mockery.deregisterAll();

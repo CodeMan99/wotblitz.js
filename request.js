@@ -1,9 +1,26 @@
-var appId;
 var fetch = require('node-fetch');
 var querystring = require('querystring');
 var util = require('util');
 
-module.exports = request;
+module.exports = Request;
+
+function Request(application_id, region, language) {
+	this.appId = application_id;
+
+	/**
+	 * Store preferred default region.
+	 *
+	 * @type {string}
+	 */
+	this.region = region || '.com';
+
+	/**
+	 * Store preferred default language.
+	 *
+	 * @type {string}
+	 */
+	this.language = language || 'en';
+}
 
 /**
  * Accessor to store a WarGaming developer application_id.
@@ -12,33 +29,19 @@ module.exports = request;
  *
  * @type {string}
  */
-Object.defineProperty(request, 'application_id', {
+Object.defineProperty(Request.prototype, 'application_id', {
 	configurable: true,
 	enumerable: true,
 	get: function() {
-		if (!appId) appId = process.env.APPLICATION_ID;
-		if (!appId) throw new Error('wotblitz/request: no APPLICATION_ID set in the environment');
+		if (!this.appId) this.appId = process.env.APPLICATION_ID;
+		if (!this.appId) throw new Error('wotblitz/request: no APPLICATION_ID set in the environment');
 
-		return appId;
+		return this.appId;
 	},
 	set: function(value) {
-		appId = value;
+		this.appId = value;
 	}
 });
-
-/**
- * Store preferred default region.
- *
- * @type {string}
- */
-request.region = '.com';
-
-/**
- * Store preferred default language.
- *
- * @type {string}
- */
-request.language = 'en';
 
 /**
  * WarGaming.net API request tool.
@@ -53,16 +56,16 @@ request.language = 'en';
  * @returns {Promise<Object>} resolves to the "data" property of the request
  * @see {@link https://developers.wargaming.net/documentation/guide/getting-started/|WarGaming.net Developer Room}
  */
-function request(options, body) {
+Request.prototype.execute = function(options, body) {
 	// assign defaults
 	options = Object.assign({
-		language: request.language,
+		language: this.language,
 		method: 'POST',
-		region: request.region
+		region: this.region
 	}, options);
 
 	try {
-		body.application_id = request.application_id;
+		body.application_id = this.application_id;
 	} catch (e) {
 		return Promise.reject(e);
 	}
@@ -98,4 +101,4 @@ function request(options, body) {
 			return null;
 		}
 	});
-}
+};

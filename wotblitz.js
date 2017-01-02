@@ -2,11 +2,83 @@ var hosts = {
 	wot: 'api.worldoftanks',
 	wotb: 'api.wotblitz'
 };
-var request = require('./request.js');
+var Request = require('./request.js');
+var account;
+var auth;
+var clanmessages;
+var clans;
+var encyclopedia;
+var servers;
+var tanks;
 
-exports.request = request;
+module.exports = create;
 
-Object.defineProperties(exports, {
+function create(application_id, region, language) {
+	var request = new Request(application_id, region, language);
+	var wotblitz = {
+		account: account(request),
+		auth: auth(request),
+		clanmessages: clanmessages(request),
+		clans: clans(request),
+		encyclopedia: encyclopedia(request),
+		servers: servers(request),
+		tanks: tanks(request)
+	};
+
+	Object.defineProperties(wotblitz, {
+		request: {
+			configurable: true,
+			enumerable: false,
+			value: request,
+			writable: true
+		},
+		/**
+		 * Convenience property to get/set the WarGaming developer key.
+		 * Exists directly on the request module.
+		 * @example
+		 * wotblitz.application_id = 'wargamingdeveloperkey';
+		 */
+		application_id: {
+			enumerable: true,
+			get: function() {
+				return request.application_id;
+			},
+			set: function(value) {
+				request.application_id = value;
+			}
+		},
+		/**
+		 * Convenience property to get/set the response language.
+		 * Exists directly on the request module.
+		 */
+		language: {
+			enumerable: true,
+			get: function() {
+				return request.language;
+			},
+			set: function(value) {
+				request.language = value;
+			}
+		},
+		/**
+		 * Convenience property to get/set the top level domain.
+		 * Exists directly on the request module.
+		 */
+		region: {
+			enumerable: true,
+			get: function() {
+				return request.region;
+			},
+			set: function(value) {
+				request.region = value;
+			}
+		}
+	});
+
+	return wotblitz;
+}
+
+Object.defineProperties(create, {
 	/**
 	 * Language constants. Use the value in the request.
 	 * @example
@@ -64,51 +136,10 @@ Object.defineProperties(exports, {
 	REGION_RU: {
 		enumerable: true,
 		value: '.ru'
-	},
-	/**
-	 * Convenience property to get/set the WarGaming developer key.
-	 * Exists directly on the request module.
-	 * @example
-	 * wotblitz.application_id = 'wargamingdeveloperkey';
-	 */
-	application_id: {
-		enumerable: true,
-		get: function() {
-			return request.application_id;
-		},
-		set: function(value) {
-			request.application_id = value;
-		}
-	},
-	/**
-	 * Convenience property to get/set the response language.
-	 * Exists directly on the request module.
-	 */
-	language: {
-		enumerable: true,
-		get: function() {
-			return request.language;
-		},
-		set: function(value) {
-			request.language = value;
-		}
-	},
-	/**
-	 * Convenience property to get/set the top level domain.
-	 * Exists directly on the request module.
-	 */
-	region: {
-		enumerable: true,
-		get: function() {
-			return request.region;
-		},
-		set: function(value) {
-			request.region = value;
-		}
 	}
 });
 
-exports.auth = {
+auth = request => ({
 	/**
 	 * Authenticates user based on Wargaming.net ID (OpenID)
 	 *
@@ -121,7 +152,7 @@ exports.auth = {
 	login: function(redirect_uri, nofollow, expires_at, display) {
 		if (!redirect_uri) return Promise.reject(new Error('wotblitz.auth.login: redirect_uri is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wot,
 			path: '/wot/auth/login/'
 		}, {
@@ -141,7 +172,7 @@ exports.auth = {
 	prolongate: function(access_token, expires_at) {
 		if (!access_token) return Promise.reject(new Error('wotblitz.auth.prolongate: access_token is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wot,
 			path: '/wot/auth/prolongate/'
 		}, {
@@ -158,16 +189,16 @@ exports.auth = {
 	logout: function(access_token) {
 		if (!access_token) return Promise.reject(new Error('wotblitz.auth.logout: access_token is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wot,
 			path: '/wot/auth/logout/'
 		}, {
 			access_token: access_token
 		});
 	}
-};
+});
 
-exports.servers = {
+servers = request => ({
 	/**
 	 * Get the number of online for each server of a given game(s)
 	 *
@@ -176,7 +207,7 @@ exports.servers = {
 	 * @returns {Promise<Object>} resolves to object describing server counts
 	 */
 	info: function(game, fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wot,
 			path: '/wgn/servers/info/'
 		}, {
@@ -184,9 +215,9 @@ exports.servers = {
 			game: game ? game.toString() : ''
 		});
 	}
-};
+});
 
-exports.account = {
+account = request => ({
 	/**
 	 * Search for a player.
 	 *
@@ -199,7 +230,7 @@ exports.account = {
 	list: function(search, type, limit, fields) {
 		if (!search) return Promise.reject(new Error('wotblitz.account.list: search is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/account/list/'
 		}, {
@@ -221,7 +252,7 @@ exports.account = {
 	info: function(account_id, access_token, extra, fields) {
 		if (!account_id) return Promise.reject(new Error('wotblitz.account.info: account_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/account/info/'
 		}, {
@@ -241,7 +272,7 @@ exports.account = {
 	achievements: function(account_id, fields) {
 		if (!account_id) return Promise.reject(new Error('wotblitz.account.achievements: account_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/account/achievements/'
 		}, {
@@ -261,7 +292,7 @@ exports.account = {
 		if (!account_id) return Promise.reject(new Error('wotblitz.account.tankstats: account_id is required'));
 		if (!tank_id) return Promise.reject(new Error('wotblitz.account.tankstats: tank_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/account/tankstats/'
 		}, {
@@ -270,9 +301,9 @@ exports.account = {
 			fields: fields ? fields.toString() : ''
 		});
 	}
-};
+});
 
-exports.clans = {
+clans = request => ({
 	/**
 	 * List of clans with minimal details.
 	 *
@@ -283,7 +314,7 @@ exports.clans = {
 	 * @returns {Promise<Object[]>} resolves to a list of short clan descriptions
 	 */
 	list: function(search, page_no, limit, fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clans/list/'
 		}, {
@@ -304,7 +335,7 @@ exports.clans = {
 	info: function(clan_id, extra, fields) {
 		if (!clan_id) return Promise.reject(new Error('wotblitz.clans.info: clan_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clans/info/'
 		}, {
@@ -324,7 +355,7 @@ exports.clans = {
 	accountinfo: function(account_id, extra, fields) {
 		if (!account_id) return Promise.reject(new Error('wotblitz.clans.accountinfo: account_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clans/accountinfo/'
 		}, {
@@ -340,16 +371,16 @@ exports.clans = {
 	 * @returns {Promise<Object>} resolves to clan terminology definitions
 	 */
 	glossary: function(fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clans/glossary/'
 		}, {
 			fields: fields ? fields.toString() : ''
 		});
 	}
-};
+});
 
-exports.encyclopedia = {
+encyclopedia = request => ({
 	/**
 	 * List of vehicle information
 	 *
@@ -359,7 +390,7 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to description of requested vehicles
 	 */
 	vehicles: function(tank_id, nation, fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/vehicles/'
 		}, {
@@ -384,7 +415,7 @@ exports.encyclopedia = {
 	vehicleprofile: function(tank_id, profile_id, modules, fields) {
 		if (!tank_id) return Promise.reject(new Error('wotblitz.encyclopedia.vehicleprofile: tank_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/vehicleprofile/'
 		}, Object.assign({
@@ -402,7 +433,7 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to description of each module
 	 */
 	modules: function(module_id, fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/modules/'
 		}, {
@@ -420,7 +451,7 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to description of each provision
 	 */
 	provisions: function(tank_id, provision_id, type, fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/provisions/'
 		}, {
@@ -437,7 +468,7 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to the description
 	 */
 	info: function(fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/info/'
 		}, {
@@ -451,7 +482,7 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to the description
 	 */
 	achievements: function(fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/achievements/'
 		}, {
@@ -467,7 +498,7 @@ exports.encyclopedia = {
 	 * @returns {Promise<Object>} resolves to the description
 	 */
 	crewskills: function(skill_id, vehicle_type, fields) {
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/crewskills/'
 		}, {
@@ -487,7 +518,7 @@ exports.encyclopedia = {
 	vehicleprofiles: function(tank_id, order_by, fields) {
 		if (!tank_id) return Promise.reject(new Error('wotblitz.encyclopedia.vehicleprofiles: tank_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/encyclopedia/vehicleprofiles/'
 		}, {
@@ -496,9 +527,9 @@ exports.encyclopedia = {
 			fields: fields ? fields.toString() : ''
 		});
 	}
-};
+});
 
-exports.tanks = {
+tanks = request => ({
 	/**
 	 * General statistics for each vehicle of the player.
 	 *
@@ -512,7 +543,7 @@ exports.tanks = {
 	stats: function(account_id, access_token, tank_id, in_garage, fields) {
 		if (!account_id) return Promise.reject(new Error('wotblitz.tanks.stats: account_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/tanks/stats/'
 		}, {
@@ -536,7 +567,7 @@ exports.tanks = {
 	achievements: function(account_id, access_token, tank_id, in_garage, fields) {
 		if (!account_id) return Promise.reject(new Error('wotblitz.tanks.achievements: account_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/tanks/achievements/'
 		}, {
@@ -547,9 +578,9 @@ exports.tanks = {
 			fields: fields ? fields.toString() : ''
 		});
 	}
-};
+});
 
-exports.clanmessages = {
+clanmessages = request => ({
 	/**
 	 * The text and meta data of all conversation.
 	 *
@@ -570,7 +601,7 @@ exports.clanmessages = {
 	messages: function(access_token, message_id, filters, fields) {
 		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.messages: access_token is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/messages/'
 		}, Object.assign({
@@ -595,7 +626,7 @@ exports.clanmessages = {
 	create: function(access_token, title, text, type, importance, expires_at) {
 		if (!expires_at) return Promise.reject(new Error('wotblitz.clanmessages.create: all arguments are required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/create/'
 		}, {
@@ -617,7 +648,7 @@ exports.clanmessages = {
 	'delete': function(access_token, message_id) {
 		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.delete: all arguments are required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/delete/'
 		}, {
@@ -636,7 +667,7 @@ exports.clanmessages = {
 	like: function(access_token, message_id, action) {
 		if (!action) return Promise.reject(new Error('wotblitz.clanmessages.like: all arguments are required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/like/'
 		}, {
@@ -657,7 +688,7 @@ exports.clanmessages = {
 		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.likes: access_token is required'));
 		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.likes: message_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/likes/'
 		}, {
@@ -682,7 +713,7 @@ exports.clanmessages = {
 		if (!access_token) return Promise.reject(new Error('wotblitz.clanmessages.update: access_token is required'));
 		if (!message_id) return Promise.reject(new Error('wotblitz.clanmessages.update: message_id is required'));
 
-		return request({
+		return request.execute({
 			hostname: hosts.wotb,
 			path: '/wotb/clanmessages/update/'
 		}, {
@@ -695,4 +726,4 @@ exports.clanmessages = {
 			type: type
 		});
 	}
-};
+});

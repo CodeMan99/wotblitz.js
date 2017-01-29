@@ -791,5 +791,328 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.importance, 'standard', '.clanmessages.update importance');
 	t.equal(fetch.options.body.expires_at, '1477873000', '.clanmessages.update expires_at');
 
+	wotblitz.tournaments.list();
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/list/', '.tournaments.list url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.list method');
+	t.equal(fetch.options.body.search, '', '.tournaments.list default search');
+	t.equal(fetch.options.body.status, '', '.tournaments.list default status');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.list default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.list default limit');
+	t.equal(fetch.options.body.fields, '', '.tournaments.list default fields');
+
+	wotblitz.tournaments.list({search: 'Brawl', status: 'upcoming', page_no: 2, limit: 10}, 'title');
+	t.equal(fetch.options.body.search, 'Brawl', '.tournaments.list search passed');
+	t.equal(fetch.options.body.status, 'upcoming', '.tournaments.list status passed');
+	t.equal(fetch.options.body.page_no, '2', '.tournaments.list page_no passed');
+	t.equal(fetch.options.body.limit, '10', '.tournaments.list limit passed');
+	t.equal(fetch.options.body.fields, 'title', '.tournaments.list fields passed');
+
+	wotblitz.tournaments.list({status: ['upcoming', 'registration_started']}, ['start_at', 'end_at']);
+	t.equal(fetch.options.body.search, '', '.tournaments.list default search');
+	t.equal(fetch.options.body.status, 'upcoming,registration_started', '.tournaments.list multiple status passed');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.list default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.list default limit');
+	t.equal(fetch.options.body.fields, 'start_at,end_at', '.tournaments.list multiple fields passed');
+
+	wotblitz.tournaments.list({
+		search: 'Battlegrounds',
+		status: ['upcoming', 'registration_started', 'registration_finished', 'running'],
+		page_no: 3,
+		limit: 5
+	}, [
+		'status',
+		'start_at',
+		'title',
+		'description'
+	]);
+	t.equal(fetch.options.body.search, 'Battlegrounds', '.tournaments.list search passed');
+	t.equal(fetch.options.body.status,
+		'upcoming,registration_started,registration_finished,running',
+		'.tournaments.list multiple status passed');
+	t.equal(fetch.options.body.page_no, '3', '.tournaments.list page_no passed');
+	t.equal(fetch.options.body.limit, '5', '.tournaments.list limit passed');
+	t.equal(fetch.options.body.fields, 'status,start_at,title,description', '.tournaments.list multiple fields passed');
+
+	t.test('.tournaments.info', st => {
+		wotblitz.tournaments.info().then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.info: tournament_id is required',
+				'.tournaments.info missing tournament_id');
+			st.end();
+		});
+	});
+
+	wotblitz.tournaments.info(5);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/info/', '.tournaments.info url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.info method');
+	t.equal(fetch.options.body.tournament_id, '5', '.tournaments.info tournament_id passed');
+	t.equal(fetch.options.body.fields, '', '.tournaments.info default fields');
+
+	wotblitz.tournaments.info(12, 'description');
+	t.equal(fetch.options.body.tournament_id, '12', '.tournaments.info tournament_id passed');
+	t.equal(fetch.options.body.fields, 'description', '.tournaments.info fields passed');
+
+	wotblitz.tournaments.info([14, 16], ['title', 'status']);
+	t.equal(fetch.options.body.tournament_id, '14,16', '.tournaments.info multiple tournament_id passed');
+	t.equal(fetch.options.body.fields, 'title,status', '.tournaments.info multiple fields passed');
+
+	t.test('.tournaments.teams', st => {
+		wotblitz.tournaments.teams().then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.teams: tournament_id is required',
+				'.tournaments.teams missing tournament_id');
+			st.end();
+		});
+	});
+
+	wotblitz.tournaments.teams(6);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.teams method');
+	t.equal(fetch.options.body.tournament_id, '6', '.tournaments.teams tournament_id passed');
+	t.equal(fetch.options.body.account_id, '', '.tournaments.teams default account_id');
+	t.equal(fetch.options.body.clan_id, '', '.tournaments.teams default clan_id');
+	t.equal(fetch.options.body.team_id, '', '.tournaments.teams default team_id');
+	t.equal(fetch.options.body.status, '', '.tournaments.teams default status');
+	t.equal(fetch.options.body.search, '', '.tournaments.teams default search');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.teams default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.teams default limit');
+	t.equal(fetch.options.body.fields, '', '.tournaments.teams default fields');
+
+	wotblitz.tournaments.teams(16, {
+		account_id: '1007942',
+		clan_id: 5,
+		team_id: 72,
+		status: 'confirmed',
+		search: 'zoo',
+		page_no: 1,
+		limit: 15
+	}, 'players');
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.teams method');
+	t.equal(fetch.options.body.tournament_id, '16', '.tournaments.teams tournament_id passed');
+	t.equal(fetch.options.body.account_id, '1007942', '.tournaments.teams account_id passed');
+	t.equal(fetch.options.body.clan_id, '5', '.tournaments.teams clan_id passed');
+	t.equal(fetch.options.body.team_id, '72', '.tournaments.teams team_id passed');
+	t.equal(fetch.options.body.status, 'confirmed', '.tournaments.teams status passed');
+	t.equal(fetch.options.body.search, 'zoo', '.tournaments.teams search passed');
+	t.equal(fetch.options.body.page_no, '1', '.tournaments.teams page_no passed');
+	t.equal(fetch.options.body.limit, '15', '.tournaments.teams limit passed');
+	t.equal(fetch.options.body.fields, 'players', '.tournaments.teams fields passed');
+
+	wotblitz.tournaments.teams(26, {
+		account_id: ['1007943', '1007944'],
+		clan_id: [14, 16, 18],
+		team_id: [73, 84, 95],
+		status: ['forming', 'confirmed'],
+		search: 'wild',
+		page_no: 2,
+		limit: 10
+	}, ['title', 'players.name']);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.teams method');
+	t.equal(fetch.options.body.tournament_id, '26', '.tournaments.teams tournament_id passed');
+	t.equal(fetch.options.body.account_id, '1007943,1007944', '.tournaments.teams account_id passed');
+	t.equal(fetch.options.body.clan_id, '14,16,18', '.tournaments.teams multiple clan_id passed');
+	t.equal(fetch.options.body.team_id, '73,84,95', '.tournaments.teams multiple team_id passed');
+	t.equal(fetch.options.body.status, 'forming,confirmed', '.tournaments.teams multiple status passed');
+	t.equal(fetch.options.body.search, 'wild', '.tournaments.teams search passed');
+	t.equal(fetch.options.body.page_no, '2', '.tournaments.teams page_no passed');
+	t.equal(fetch.options.body.limit, '10', '.tournaments.teams limit passed');
+	t.equal(fetch.options.body.fields, 'title,players.name', '.tournaments.teams multiple fields passed');
+
+	t.test('.tournaments.stages', st => {
+		wotblitz.tournaments.stages().then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.stages: tournament_id is required',
+				'.tournaments.stages: missing tournament_id');
+			st.end();
+		});
+	});
+
+	wotblitz.tournaments.stages(7);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/stages/', '.tournaments.stages url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.stages method');
+	t.equal(fetch.options.body.tournament_id, '7', '.tournaments.stages tournament_id passed');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.stages default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.stages default limit');
+	t.equal(fetch.options.body.fields, '', '.tournaments.stages default limit');
+
+	wotblitz.tournaments.stages(17, {page_no: 1, limit: 12}, 'description');
+	t.equal(fetch.options.body.tournament_id, '17', '.tournaments.stages tournament_id passed');
+	t.equal(fetch.options.body.page_no, '1', '.tournaments.stages page_no passed');
+	t.equal(fetch.options.body.limit, '12', '.tournaments.stages limit passed');
+	t.equal(fetch.options.body.fields, 'description', '.tournaments.stages fields passed');
+
+	wotblitz.tournaments.stages(27, null, ['min_tier', 'max_tier']);
+	t.equal(fetch.options.body.tournament_id, '27', '.tournaments.stages tournament_id passed');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.stages default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.stages default limit');
+	t.equal(fetch.options.body.fields, 'min_tier,max_tier', '.tournaments.stages mutliple fields passed');
+
+	t.test('.tournaments.matches', st => {
+		wotblitz.tournaments.matches().then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.matches: tournament_id is required',
+				'.tournaments.matches missing tournament_id');
+			st.end();
+		});
+	});
+
+	t.test('.tournaments.matches', st => {
+		wotblitz.tournaments.matches(12).then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.matches: stage_id is required',
+				'.tournaments.matches missing stage_id');
+			st.end();
+		});
+	});
+
+	wotblitz.tournaments.matches(8, 1);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/matches/', '.tournaments.matches url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.matches method');
+	t.equal(fetch.options.body.tournament_id, '8', '.tournaments.matches tournament_id passed');
+	t.equal(fetch.options.body.stage_id, '1', '.tournaments.matches stage_id passed');
+	t.equal(fetch.options.body.team_id, '', '.tournaments.matches default team_id');
+	t.equal(fetch.options.body.group_id, '', '.tournaments.matches default group_id');
+	t.equal(fetch.options.body.round_number, '', '.tournaments.matches default round_number');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.matches default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.matches default limit');
+	t.equal(fetch.options.body.fields, '', '.tournaments.matches default fields');
+
+	wotblitz.tournaments.matches(18, 2, {team_id: 45, group_id: 3, round_number: 1, page_no: 1, limit: 5}, 'state');
+	t.equal(fetch.options.body.tournament_id, '18', '.tournaments.matches tournament_id passed');
+	t.equal(fetch.options.body.stage_id, '2', '.tournaments.matches stage_id passed');
+	t.equal(fetch.options.body.team_id, '45', '.tournaments.matches team_id passed');
+	t.equal(fetch.options.body.round_number, '1', '.tournaments.matches round_number passed');
+	t.equal(fetch.options.body.page_no, '1', '.tournaments.matches page_no passed');
+	t.equal(fetch.options.body.limit, '5', '.tournaments.matches limit passed');
+	t.equal(fetch.options.body.fields, 'state', '.tournaments.matches fields passed');
+
+	wotblitz.tournaments.matches(28, 3, {
+		team_id: [2, 4, 10],
+		group_id: [3, 5, 9, 11],
+		round_number: [1, 2, 3]
+	}, ['id', 'start_time']);
+	t.equal(fetch.options.body.tournament_id, '28', '.tournaments.matches tournament_id passed');
+	t.equal(fetch.options.body.stage_id, '3', '.tournaments.matches stage_id passed');
+	t.equal(fetch.options.body.team_id, '2,4,10', '.tournaments.matches multiple team_id passed');
+	t.equal(fetch.options.body.group_id, '3,5,9,11', '.tournaments.matches multiple group_id passed');
+	t.equal(fetch.options.body.round_number, '1,2,3', '.tournaments.matches multiple round_number passed');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.matches default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.matches default limit');
+	t.equal(fetch.options.body.fields, 'id,start_time', '.tournaments.matches multiple fields passed');
+
+	t.test('.tournaments.standings', st => {
+		wotblitz.tournaments.standings().then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.standings: tournament_id is required',
+				'.tournaments.standings missing tournament_id');
+			st.end();
+		});
+	});
+
+	wotblitz.tournaments.standings(9);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/standings/', '.tournaments.standings url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.standings method');
+	t.equal(fetch.options.body.tournament_id, '9', '.tournaments.standings tournament_id passed');
+	t.equal(fetch.options.body.team_id, '', '.tournaments.standings default team_id');
+	t.equal(fetch.options.body.from_position, '', '.tournaments.standings default from_position');
+	t.equal(fetch.options.body.to_position, '', '.tournaments.standings default to_position');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.standings default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.standings default limit');
+	t.equal(fetch.options.body.fields, '', '.tournaments.standings default fields');
+
+	wotblitz.tournaments.standings(19, {
+		team_id: 12,
+		from_position: 4,
+		to_position: 1,
+		page_no: 1,
+		limit: 6
+	}, 'points');
+	t.equal(fetch.options.body.tournament_id, '19', '.tournaments.standings tournament_id passed');
+	t.equal(fetch.options.body.team_id, '12', '.tournaments.standings team_id passed');
+	t.equal(fetch.options.body.from_position, '4', '.tournaments.standings from_position passed');
+	t.equal(fetch.options.body.to_position, '1', '.tournaments.standings to_position passed');
+	t.equal(fetch.options.body.page_no, '1', '.tournaments.standings page_no passed');
+	t.equal(fetch.options.body.limit, '6', '.tournaments.standings limit passed');
+	t.equal(fetch.options.body.fields, 'points', '.tournaments.standings fields passed');
+
+	wotblitz.tournaments.standings(29, {team_id: [1, 2, 3]}, ['wins', 'battle_played', 'position']);
+	t.equal(fetch.options.body.tournament_id, '29', '.tournaments.standings tournament_id passed');
+	t.equal(fetch.options.body.team_id, '1,2,3', '.tournaments.standings multiple team_id passed');
+	t.equal(fetch.options.body.from_position, '', '.tournaments.standings default from_position');
+	t.equal(fetch.options.body.to_position, '', '.tournaments.standings default to_position');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.standings default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.standings default limit');
+	t.equal(fetch.options.body.fields, 'wins,battle_played,position', '.tournaments.standings multiple fields passed');
+
+	t.test('.tournaments.tables', st => {
+		wotblitz.tournaments.tables().then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.tables: tournament_id is required',
+				'.tournaments.tables missing tournament_id');
+			st.end();
+		});
+	});
+
+	t.test('.tournaments.tables', st => {
+		wotblitz.tournaments.tables(11).then(() => {
+			st.fail('Unexpected promise resolve');
+			st.end();
+		}, error => {
+			st.equal(error && error.message,
+				'wotblitz.tournaments.tables: stage_id is required',
+				'.tournaments.tables missing stage_id');
+			st.end();
+		});
+	});
+
+	wotblitz.tournaments.tables(10, 2);
+	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/tables/', '.tournaments.tables url');
+	t.equal(fetch.options.method, 'POST', '.tournaments.tables method');
+	t.equal(fetch.options.body.tournament_id, '10', '.tournaments.tables tournament_id passed');
+	t.equal(fetch.options.body.stage_id, '2', '.tournaments.tables stage_id passed');
+	t.equal(fetch.options.body.group_id, '', '.tournaments.tables default group_id');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.tables default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.tables default limit');
+	t.equal(fetch.options.body.fields, '', '.tournaments.tables default fields');
+
+	wotblitz.tournaments.tables(20, 3, {group_id: 7, page_no: 3, limit: 2}, 'round');
+	t.equal(fetch.options.body.tournament_id, '20', '.tournaments.tables tournament_id passed');
+	t.equal(fetch.options.body.stage_id, '3', '.tournaments.tables stage_id passed');
+	t.equal(fetch.options.body.group_id, '7', '.tournaments.tables group_id passed');
+	t.equal(fetch.options.body.page_no, '3', '.tournaments.tables page_no passed');
+	t.equal(fetch.options.body.limit, '2', '.tournaments.tables limit passed');
+	t.equal(fetch.options.body.fields, 'round', '.tournaments.tables fields passed');
+
+	wotblitz.tournaments.tables(30, 4, {group_id: [2, 4, 6]}, ['title', 'team_points', 'position']);
+	t.equal(fetch.options.body.tournament_id, '30', '.tournaments.tables tournament_id passed');
+	t.equal(fetch.options.body.stage_id, '4', '.tournaments.tables stage_id passed');
+	t.equal(fetch.options.body.group_id, '2,4,6', '.tournaments.tables multiple group_id passed');
+	t.equal(fetch.options.body.page_no, '', '.tournaments.tables default page_no');
+	t.equal(fetch.options.body.limit, '', '.tournaments.tables default limit');
+	t.equal(fetch.options.body.fields, 'title,team_points,position', '.tournaments.tables multiple fields passed');
+
 	t.end();
 });

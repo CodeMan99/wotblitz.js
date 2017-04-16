@@ -4,6 +4,7 @@
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "./wotblitz.js",
   "scripts": {
+    "cover": "istanbul cover tape -- test/*.js",
     "lint": "eslint -f tap *.js test | faucet",
     "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
     "test": "faucet test/*.js"
@@ -33,6 +34,7 @@
   "devDependencies": {
     "eslint": "^3.19.0",
     "faucet": "0.0.1",
+    "istanbul": "^0.4.5",
     "mockery": "^2.0.0",
     "nock": "^9.0.13",
     "tape": "^4.6.3"

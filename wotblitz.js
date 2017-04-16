@@ -10,6 +10,7 @@ var clans;
 var encyclopedia;
 var servers;
 var tanks;
+var tournaments;
 
 module.exports = create;
 
@@ -23,7 +24,8 @@ function create(application_id, region, language) {
 		clans: clans(execute),
 		encyclopedia: encyclopedia(execute),
 		servers: servers(execute),
-		tanks: tanks(execute)
+		tanks: tanks(execute),
+		tournaments: tournaments(execute)
 	};
 
 	Object.defineProperties(wotblitz, {
@@ -726,5 +728,215 @@ tanks = request => ({
 			in_garage: in_garage,
 			fields: fields ? fields.toString() : ''
 		});
+	}
+});
+
+tournaments = request => ({
+	/**
+	 * List of all tournaments.
+	 *
+	 * @param {Object} [options]
+	 * @param {string} [options.search]
+	 * @param {string|string[]} [options.status]
+	 * @param {number} [options.page_no]
+	 * @param {number} [options.limit]
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	list: function(options, fields) {
+		options = Object.assign({
+			search: null,
+			status: null,
+			page_no: null,
+			limit: null
+		}, options, {
+			fields: fields ? fields.toString() : ''
+		});
+
+		if (Array.isArray(options.status)) options.status = options.status.toString();
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/list/'
+		}, options);
+	},
+	/**
+	 * @param {number|number[]} tournament_id
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	info: function(tournament_id, fields) {
+		if (!tournament_id) return Promise.reject(new Error('wotblitz.tournaments.info: tournament_id is required'));
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/info/'
+		}, {
+			tournament_id: tournament_id.toString(),
+			fields: fields ? fields.toString() : ''
+		});
+	},
+	/**
+	 * @param {number} tournament_id
+	 * @param {Object} [options]
+	 * @param {number|number[]} [options.account_id]
+	 * @param {number|number[]} [options.clan_id]
+	 * @param {number|number[]} [options.team_id]
+	 * @param {string|string[]} [options.status]
+	 * @param {string} [options.search]
+	 * @param {number} [options.page_no]
+	 * @param {number} [options.limit]
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	teams: function(tournament_id, options, fields) {
+		if (!tournament_id) return Promise.reject(new Error('wotblitz.tournaments.teams: tournament_id is required'));
+
+		options = Object.assign({
+			account_id: null,
+			clan_id: null,
+			team_id: null,
+			status: null,
+			search: null,
+			page_no: null,
+			limit: null
+		}, options, {
+			tournament_id: tournament_id,
+			fields: fields ? fields.toString() : ''
+		});
+
+		if (Array.isArray(options.account_id)) options.account_id = options.account_id.toString();
+		if (Array.isArray(options.clan_id)) options.clan_id = options.clan_id.toString();
+		if (Array.isArray(options.team_id)) options.team_id = options.team_id.toString();
+		if (Array.isArray(options.status)) options.status = options.status.toString();
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/teams/'
+		}, options);
+	},
+	/**
+	 * @param {number} tournament_id
+	 * @param {Object} [options]
+	 * @param {number} [options.page_no]
+	 * @param {number} [options.limit]
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	stages: function(tournament_id, options, fields) {
+		if (!tournament_id) return Promise.reject(new Error('wotblitz.tournaments.stages: tournament_id is required'));
+
+		options = Object.assign({
+			page_no: null,
+			limit: null
+		}, options, {
+			tournament_id: tournament_id,
+			fields: fields ? fields.toString() : ''
+		});
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/stages/'
+		}, options);
+	},
+	/**
+	 * @param {number} tournament_id
+	 * @param {number} stage_id
+	 * @param {Object} [options]
+	 * @param {number|number[]} [options.team_id]
+	 * @param {number|number[]} [options.group_id]
+	 * @param {number|number[]} [options.round_number]
+	 * @param {number} [options.page_no]
+	 * @param {number} [options.limit]
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	matches: function(tournament_id, stage_id, options, fields) {
+		if (!tournament_id) return Promise.reject(new Error('wotblitz.tournaments.matches: tournament_id is required'));
+		if (!stage_id) return Promise.reject(new Error('wotblitz.tournaments.matches: stage_id is required'));
+
+		options = Object.assign({
+			team_id: null,
+			group_id: null,
+			round_number: null,
+			page_no: null,
+			limit: null
+		}, options, {
+			tournament_id: tournament_id,
+			stage_id: stage_id,
+			fields: fields ? fields.toString() : ''
+		});
+
+		if (Array.isArray(options.team_id)) options.team_id = options.team_id.toString();
+		if (Array.isArray(options.group_id)) options.group_id = options.group_id.toString();
+		if (Array.isArray(options.round_number)) options.round_number = options.round_number.toString();
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/matches/'
+		}, options);
+	},
+	/**
+	 * @param {number} tournament_id
+	 * @param {Object} [options]
+	 * @param {number|number[]} [options.team_id]
+	 * @param {number} [options.from_position]
+	 * @param {number} [options.to_position]
+	 * @param {number} [options.page_no]
+	 * @param {number} [options.limit]
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	standings: function(tournament_id, options, fields) {
+		if (!tournament_id) return Promise.reject(new Error('wotblitz.tournaments.standings: tournament_id is required'));
+
+		options = Object.assign({
+			team_id: null,
+			from_position: null,
+			to_position: null,
+			page_no: null,
+			limit: null
+		}, options, {
+			tournament_id: tournament_id,
+			fields: fields ? fields.toString() : ''
+		});
+
+		if (Array.isArray(options.team_id)) options.team_id = options.team_id.toString();
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/standings/'
+		}, options);
+	},
+	/**
+	 * @param {number} tournament_id
+	 * @param {number} stage_id
+	 * @param {Object} [options]
+	 * @param {number|number[]} [options.group_id]
+	 * @param {number} [options.page_no]
+	 * @param {number} [options.limit]
+	 * @param {string|string[]} [fields] response selection
+	 * @returns {Promise<Object>}
+	 */
+	tables: function(tournament_id, stage_id, options, fields) {
+		if (!tournament_id) return Promise.reject(new Error('wotblitz.tournaments.tables: tournament_id is required'));
+		if (!stage_id) return Promise.reject(new Error('wotblitz.tournaments.tables: stage_id is required'));
+
+		options = Object.assign({
+			group_id: null,
+			page_no: null,
+			limit: null
+		}, options, {
+			tournament_id: tournament_id,
+			stage_id: stage_id,
+			fields: fields ? fields.toString() : ''
+		});
+
+		if (Array.isArray(options.group_id)) options.group_id = options.group_id.toString();
+
+		return request({
+			hostname: hosts.wotb,
+			path: '/wotb/tournaments/tables/'
+		}, options);
 	}
 });

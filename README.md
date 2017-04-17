@@ -11,6 +11,14 @@ items are missing (like a new tank line) it is due to the fact that Wargaming do
 not update their API very often. Missing data is out of the control of this
 application. Any ticket created on this topic will be closed with a "wont fix" label.
 
+Limitations
+-----------
+
+All data is pulled directly from Wargaming's API for World of Tanks. When in-game
+items are missing (like a new tank line) it is due to the fact that Wargaming does
+not update their API very often. Missing data is out of the control of this
+application. Any ticket created on this topic will be closed with a "wont fix" label.
+
 [License](LICENSE.md)
 ---------------------
 

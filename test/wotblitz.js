@@ -1,9 +1,16 @@
 var mockery = require('mockery');
 var querystring = require('querystring');
 var test = require('tape');
-
-// WARNING: do not access this object when handling promises because of next tick.
 var fetch = {};
+
+// synchronous promise utils to avoid the need for sub-tests
+Promise = function() { throw new Error('Promise constructor not implemented for tests'); };
+Promise.resolve = value => {
+	return {then: resolve => resolve(value)};
+};
+Promise.reject = value => {
+	return {then: (_, reject) => reject(value)};
+};
 
 mockery.registerAllowable('../wotblitz.js');
 mockery.registerAllowable('./request.js');
@@ -13,12 +20,7 @@ mockery.registerMock('node-fetch', (url, options) => {
 	fetch.options = options;
 
 	return Promise.resolve({
-		json: function() {
-			return Promise.resolve({
-				status: 'ok',
-				data: fetch.data
-			});
-		}
+		json: () => Promise.resolve({status: 'ok'})
 	});
 });
 mockery.registerMock('querystring', {
@@ -32,19 +34,15 @@ mockery.disable();
 mockery.deregisterAll();
 
 test('wotblitz', t => {
+	var failure = () => t.fail('unexpected promise resolve');
+
 	wotblitz.application_id = 'wotblitztest';
 	t.equal(wotblitz.application_id, wotblitz.request.application_id, '.application_id pass through to .request.application_id');
 	t.equal(wotblitz.language, wotblitz.request.language, '.language pass through to .request.language');
 	t.equal(wotblitz.region, wotblitz.request.region, '.region pass through to .request.region');
 
-	t.test('.auth.login', st => {
-		wotblitz.auth.login().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.auth.login: redirect_uri is required', 'rejects without a redirect_uri');
-			st.end();
-		});
+	wotblitz.auth.login().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.auth.login: redirect_uri is required', 'rejects without a redirect_uri');
 	});
 
 	wotblitz.auth.login('http:\/\/localhost:8888');
@@ -61,14 +59,8 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.expires_at, '1209600', '.auth.login expires_at');
 	t.equal(fetch.options.body.display, 'page', '.auth.login page');
 
-	t.test('.auth.prolongate', st => {
-		wotblitz.auth.prolongate().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.auth.prolongate: access_token is required', 'rejects without an access_token');
-			st.end();
-		});
+	wotblitz.auth.prolongate().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.auth.prolongate: access_token is required', 'rejects without an access_token');
 	});
 
 	wotblitz.auth.prolongate('b608c5293fdc496db8fc238151b9a47283ae183c');
@@ -81,14 +73,8 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.access_token, '7711f8894ea0430fb030502662fab980622aa2f9', '.auth.prolongate access_token');
 	t.equal(fetch.options.body.expires_at, '604800', '.auth.prolongate expires_at');
 
-	t.test('.auth.logout', st => {
-		wotblitz.auth.logout().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.auth.logout: access_token is required', 'rejects without an access_token');
-			st.end();
-		});
+	wotblitz.auth.logout().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.auth.logout: access_token is required', 'rejects without an access_token');
 	});
 
 	wotblitz.auth.logout('6c2f7b7eba9f4b359bf5f511d48c6bed269ac37e');
@@ -110,14 +96,8 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.game, 'wotb,wot', '.servers.info game specified with array');
 	t.equal(fetch.options.body.fields, 'players_online,server', '.servers.info game specified with array');
 
-	t.test('.account.list', st => {
-		wotblitz.account.list().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.account.list: search is required', 'rejects without a search value');
-			st.end();
-		});
+	wotblitz.account.list().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.account.list: search is required', 'rejects without a search value');
 	});
 
 	wotblitz.account.list('user');
@@ -140,14 +120,8 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '', '.account.list unspecified limit');
 	t.equal(fetch.options.body.fields, 'account_id,nickname', '.account.list fields specified with array');
 
-	t.test('.account.info', st => {
-		wotblitz.account.info().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.account.info: account_id is required', 'rejects without an account_id');
-			st.end();
-		});
+	wotblitz.account.info().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.account.info: account_id is required', 'rejects without an account_id');
 	});
 
 	wotblitz.account.info('1009922015');
@@ -183,16 +157,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.extra, 'private.grouped_contacts', '.account.info multiple extra');
 	t.equal(fetch.options.body.fields, 'last_battle_time,statistics.all,private.grouped_contacts', '.account.info multiple fields');
 
-	t.test('.account.achievements', st => {
-		wotblitz.account.achievements().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.account.achievements: account_id is required',
-				'.account.achievements missing account_id');
-			st.end();
-		});
+	wotblitz.account.achievements().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.account.achievements: account_id is required',
+			'.account.achievements missing account_id');
 	});
 
 	wotblitz.account.achievements('1009922021');
@@ -209,28 +177,16 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.account_id, '1009922023,1009922024', '.account.achievements multiple account_id');
 	t.equal(fetch.options.body.fields, 'achievements,max_series', '.account.achievements multiple fields');
 
-	t.test('.account.tankstats account_id', st => {
-		wotblitz.account.tankstats().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.account.tankstats: account_id is required',
-				'.account.tankstats missing account_id');
-			st.end();
-		});
+	wotblitz.account.tankstats().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.account.tankstats: account_id is required',
+			'.account.tankstats missing account_id');
 	});
 
-	t.test('.account.tankstats tank_id', st => {
-		wotblitz.account.tankstats('1009922045').then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.account.tankstats: tank_id is required',
-				'.account.tankstats missing tank_id');
-			st.end();
-		});
+	wotblitz.account.tankstats('1009922045').then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.account.tankstats: tank_id is required',
+			'.account.tankstats missing tank_id');
 	});
 
 	wotblitz.account.tankstats('1009922050', '1');
@@ -270,14 +226,8 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '', '.clans.list limit unspecified');
 	t.equal(fetch.options.body.fields, 'tag,name,clan_id', '.clans.list multiple fields');
 
-	t.test('.clans.info', st => {
-		wotblitz.clans.info().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.clans.info: clan_id is required', '.clans.info missing clan_id');
-			st.end();
-		});
+	wotblitz.clans.info().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.clans.info: clan_id is required', '.clans.info missing clan_id');
 	});
 
 	wotblitz.clans.info(17);
@@ -297,16 +247,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.extra, 'members', '.clans.info multiple extra');
 	t.equal(fetch.options.body.fields, 'members.account_name,members.account_id', '.clans.info multiple fields');
 
-	t.test('.clans.accountinfo', st => {
-		wotblitz.clans.accountinfo().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clans.accountinfo: account_id is required',
-				'.clans.accountinfo missing account_id');
-			st.end();
-		});
+	wotblitz.clans.accountinfo().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clans.accountinfo: account_id is required',
+			'.clans.accountinfo missing account_id');
 	});
 
 	wotblitz.clans.accountinfo('1009922080');
@@ -354,16 +298,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.nation, 'ussr,usa', '.encyclopedia.vehicles multiple nation');
 	t.equal(fetch.options.body.fields, 'name,tier,type,nation', '.encyclopedia.vehicles multiple fields');
 
-	t.test('.encyclopedia.vehicleprofile', st => {
-		wotblitz.encyclopedia.vehicleprofile().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.encyclopedia.vehicleprofile: tank_id is required',
-				'.encyclopedia.vehicleprofile missing tank_id');
-			st.end();
-		});
+	wotblitz.encyclopedia.vehicleprofile().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.encyclopedia.vehicleprofile: tank_id is required',
+			'.encyclopedia.vehicleprofile missing tank_id');
 	});
 
 	wotblitz.encyclopedia.vehicleprofile(11777);
@@ -491,16 +429,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.vehicle_type, 'mediumTank,lightTank', '.encyclopedia.crewskills multiple vehicle_type');
 	t.equal(fetch.options.body.fields, 'name,tip,effect', '.encyclopedia.crewskills multiple fields');
 
-	t.test('.encyclopedia.vehicleprofiles', st => {
-		wotblitz.encyclopedia.vehicleprofiles().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.encyclopedia.vehicleprofiles: tank_id is required',
-				'.encyclopedia.vehicleprofiles missing tank_id');
-			st.end();
-		});
+	wotblitz.encyclopedia.vehicleprofiles().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.encyclopedia.vehicleprofiles: tank_id is required',
+			'.encyclopedia.vehicleprofiles missing tank_id');
 	});
 
 	wotblitz.encyclopedia.vehicleprofiles(10769);
@@ -520,14 +452,8 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.order_by, '-price_credit', '.encyclopedia.vehicleprofiles order_by');
 	t.equal(fetch.options.body.fields, 'tank_id,profile_id', '.encyclopedia.vehicleprofiles multiple fields');
 
-	t.test('.tanks.stats', st => {
-		wotblitz.tanks.stats().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message, 'wotblitz.tanks.stats: account_id is required', '.tanks.stats missing account_id');
-			st.end();
-		});
+	wotblitz.tanks.stats().then(failure, error => {
+		t.equal(error && error.message, 'wotblitz.tanks.stats: account_id is required', '.tanks.stats missing account_id');
 	});
 
 	wotblitz.tanks.stats('1009923050');
@@ -553,16 +479,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.in_garage, '', '.tanks.stats in_garage unspecified');
 	t.equal(fetch.options.body.fields, 'all.wins,all.battles', '.tanks.stats multiple fields');
 
-	t.test('.tanks.achievements', st => {
-		wotblitz.tanks.achievements().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tanks.achievements: account_id is required',
-				'.tanks.achievements missing account_id');
-			st.end();
-		});
+	wotblitz.tanks.achievements().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tanks.achievements: account_id is required',
+			'.tanks.achievements missing account_id');
 	});
 
 	wotblitz.tanks.achievements('1009923060');
@@ -588,16 +508,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.in_garage, '', '.tanks.achievements in_garage unspecified');
 	t.equal(fetch.options.body.fields, 'all.wins,all.battles,all.xp', '.tanks.achievements multiple fields');
 
-	t.test('.clanmessages.messages', st => {
-		wotblitz.clanmessages.messages().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.messages: access_token is required',
-				'.clanmessages.messages missing access_token');
-			st.end();
-		});
+	wotblitz.clanmessages.messages().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.messages: access_token is required',
+			'.clanmessages.messages missing access_token');
 	});
 
 	wotblitz.clanmessages.messages('123456789abcdef0123456789abcdef012345678');
@@ -644,16 +558,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.type, 'general', '.clanmessages.messages type');
 	t.equal(fetch.options.body.fields, 'message,message_id,title,author_id', '.clanmessages.messages multiple fields');
 
-	t.test('.clanmessages.create', st => {
-		wotblitz.clanmessages.create('token', 'title', 'text', 'type', 'importance').then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.create: all arguments are required',
-				'.clanmessages.create arguments');
-			st.end();
-		});
+	wotblitz.clanmessages.create('token', 'title', 'text', 'type', 'importance').then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.create: all arguments are required',
+			'.clanmessages.create arguments');
 	});
 
 	wotblitz.clanmessages.create('f0123456789abcdef0123456789abcdef0123456', 'TEST: Clan Meeting',
@@ -668,16 +576,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.importance, 'standard', '.clanmessages.create standard');
 	t.equal(fetch.options.body.expires_at, '1477872000', '.clanmessages.create expires_at');
 
-	t.test('.clanmessages.delete', st => {
-		wotblitz.clanmessages.delete('token').then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.delete: all arguments are required',
-				'.clanmessages.delete arguments');
-			st.end();
-		});
+	wotblitz.clanmessages.delete('token').then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.delete: all arguments are required',
+			'.clanmessages.delete arguments');
 	});
 
 	wotblitz.clanmessages.delete('0123456789abcdef0123456789abcdef01234567', 83);
@@ -686,16 +588,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.access_token, '0123456789abcdef0123456789abcdef01234567', '.clanmessages.delete access_token');
 	t.equal(fetch.options.body.message_id, '83', '.clanmessages.delete message_id');
 
-	t.test('.clanmessages.like', st => {
-		wotblitz.clanmessages.like('token', 'id').then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.like: all arguments are required',
-				'.clanmessages.like arguments');
-			st.end();
-		});
+	wotblitz.clanmessages.like('token', 'id').then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.like: all arguments are required',
+			'.clanmessages.like arguments');
 	});
 
 	wotblitz.clanmessages.like('123456789abcdef0123456789abcdef012345678', 105, 'add');
@@ -705,28 +601,16 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.message_id, '105', '.clanmessages.like message_id');
 	t.equal(fetch.options.body.action, 'add', '.clanmessages.like action');
 
-	t.test('.clanmessages.likes', st => {
-		wotblitz.clanmessages.likes().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.likes: access_token is required',
-				'.clanmessages.likes missing access_token');
-			st.end();
-		});
+	wotblitz.clanmessages.likes().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.likes: access_token is required',
+			'.clanmessages.likes missing access_token');
 	});
 
-	t.test('.clanmessages.likes', st => {
-		wotblitz.clanmessages.likes('token').then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.likes: message_id is required',
-				'.clanmessages.likes missing message_id');
-			st.end();
-		});
+	wotblitz.clanmessages.likes('token').then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.likes: message_id is required',
+			'.clanmessages.likes missing message_id');
 	});
 
 	wotblitz.clanmessages.likes('456789abcdef0123456789abcdef0123456789ab', 112);
@@ -746,28 +630,16 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.message_id, '130', '.clanmessages.likes message_id');
 	t.equal(fetch.options.body.fields, 'account_id,liked_at', '.clanmessages.likes multiple fields');
 
-	t.test('.clanmessages.update', st => {
-		wotblitz.clanmessages.update().then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.update: access_token is required',
-				'.clanmessages.update missing access_token');
-			st.end();
-		});
+	wotblitz.clanmessages.update().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.update: access_token is required',
+			'.clanmessages.update missing access_token');
 	});
 
-	t.test('.clanmessages.update', st => {
-		wotblitz.clanmessages.update('token').then(() => {
-			st.fail('unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.clanmessages.update: message_id is required',
-				'.clanmessages.update missing message_id');
-			st.end();
-		});
+	wotblitz.clanmessages.update('token').then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.clanmessages.update: message_id is required',
+			'.clanmessages.update missing message_id');
 	});
 
 	wotblitz.clanmessages.update('23456789abcdef0123456789abcdef0123456789', 185);
@@ -833,16 +705,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '5', '.tournaments.list limit passed');
 	t.equal(fetch.options.body.fields, 'status,start_at,title,description', '.tournaments.list multiple fields passed');
 
-	t.test('.tournaments.info', st => {
-		wotblitz.tournaments.info().then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.info: tournament_id is required',
-				'.tournaments.info missing tournament_id');
-			st.end();
-		});
+	wotblitz.tournaments.info().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.info: tournament_id is required',
+			'.tournaments.info missing tournament_id');
 	});
 
 	wotblitz.tournaments.info(5);
@@ -859,16 +725,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.tournament_id, '14,16', '.tournaments.info multiple tournament_id passed');
 	t.equal(fetch.options.body.fields, 'title,status', '.tournaments.info multiple fields passed');
 
-	t.test('.tournaments.teams', st => {
-		wotblitz.tournaments.teams().then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.teams: tournament_id is required',
-				'.tournaments.teams missing tournament_id');
-			st.end();
-		});
+	wotblitz.tournaments.teams().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.teams: tournament_id is required',
+			'.tournaments.teams missing tournament_id');
 	});
 
 	wotblitz.tournaments.teams(6);
@@ -926,16 +786,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '10', '.tournaments.teams limit passed');
 	t.equal(fetch.options.body.fields, 'title,players.name', '.tournaments.teams multiple fields passed');
 
-	t.test('.tournaments.stages', st => {
-		wotblitz.tournaments.stages().then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.stages: tournament_id is required',
-				'.tournaments.stages: missing tournament_id');
-			st.end();
-		});
+	wotblitz.tournaments.stages().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.stages: tournament_id is required',
+			'.tournaments.stages: missing tournament_id');
 	});
 
 	wotblitz.tournaments.stages(7);
@@ -958,28 +812,16 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '', '.tournaments.stages default limit');
 	t.equal(fetch.options.body.fields, 'min_tier,max_tier', '.tournaments.stages mutliple fields passed');
 
-	t.test('.tournaments.matches', st => {
-		wotblitz.tournaments.matches().then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.matches: tournament_id is required',
-				'.tournaments.matches missing tournament_id');
-			st.end();
-		});
+	wotblitz.tournaments.matches().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.matches: tournament_id is required',
+			'.tournaments.matches missing tournament_id');
 	});
 
-	t.test('.tournaments.matches', st => {
-		wotblitz.tournaments.matches(12).then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.matches: stage_id is required',
-				'.tournaments.matches missing stage_id');
-			st.end();
-		});
+	wotblitz.tournaments.matches(12).then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.matches: stage_id is required',
+			'.tournaments.matches missing stage_id');
 	});
 
 	wotblitz.tournaments.matches(8, 1);
@@ -1017,16 +859,10 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '', '.tournaments.matches default limit');
 	t.equal(fetch.options.body.fields, 'id,start_time', '.tournaments.matches multiple fields passed');
 
-	t.test('.tournaments.standings', st => {
-		wotblitz.tournaments.standings().then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.standings: tournament_id is required',
-				'.tournaments.standings missing tournament_id');
-			st.end();
-		});
+	wotblitz.tournaments.standings().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.standings: tournament_id is required',
+			'.tournaments.standings missing tournament_id');
 	});
 
 	wotblitz.tournaments.standings(9);
@@ -1064,28 +900,16 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.limit, '', '.tournaments.standings default limit');
 	t.equal(fetch.options.body.fields, 'wins,battle_played,position', '.tournaments.standings multiple fields passed');
 
-	t.test('.tournaments.tables', st => {
-		wotblitz.tournaments.tables().then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.tables: tournament_id is required',
-				'.tournaments.tables missing tournament_id');
-			st.end();
-		});
+	wotblitz.tournaments.tables().then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.tables: tournament_id is required',
+			'.tournaments.tables missing tournament_id');
 	});
 
-	t.test('.tournaments.tables', st => {
-		wotblitz.tournaments.tables(11).then(() => {
-			st.fail('Unexpected promise resolve');
-			st.end();
-		}, error => {
-			st.equal(error && error.message,
-				'wotblitz.tournaments.tables: stage_id is required',
-				'.tournaments.tables missing stage_id');
-			st.end();
-		});
+	wotblitz.tournaments.tables(11).then(failure, error => {
+		t.equal(error && error.message,
+			'wotblitz.tournaments.tables: stage_id is required',
+			'.tournaments.tables missing stage_id');
 	});
 
 	wotblitz.tournaments.tables(10, 2);

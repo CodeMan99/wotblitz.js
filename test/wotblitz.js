@@ -46,7 +46,7 @@ test('wotblitz', t => {
 	t.equal(wotblitz.region, wotblitz.request.region, '.region pass through to .request.region');
 
 	wotblitz.auth.login().then(failure, error => {
-		t.equal(error && error.message, 'wotblitz.auth.login: redirect_uri is required', 'rejects without a redirect_uri');
+		t.equal(error && error.message, 'wotblitz.auth.login: redirect_uri is required', '.auth.login missing redirect_uri');
 	});
 
 	wotblitz.auth.login('http://localhost:8888');
@@ -64,7 +64,9 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.display, 'page', '.auth.login page');
 
 	wotblitz.auth.prolongate().then(failure, error => {
-		t.equal(error && error.message, 'wotblitz.auth.prolongate: access_token is required', 'rejects without an access_token');
+		t.equal(error && error.message,
+			'wotblitz.auth.prolongate: access_token is required',
+			'.auth.prolongate missing access_token');
 	});
 
 	wotblitz.auth.prolongate('b608c5293fdc496db8fc238151b9a47283ae183c');
@@ -78,7 +80,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.expires_at, '604800', '.auth.prolongate expires_at');
 
 	wotblitz.auth.logout().then(failure, error => {
-		t.equal(error && error.message, 'wotblitz.auth.logout: access_token is required', 'rejects without an access_token');
+		t.equal(error && error.message, 'wotblitz.auth.logout: access_token is required', '.auth.logout missing access_token');
 	});
 
 	wotblitz.auth.logout('6c2f7b7eba9f4b359bf5f511d48c6bed269ac37e');
@@ -101,7 +103,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'players_online,server', '.servers.info game specified with array');
 
 	wotblitz.account.list().then(failure, error => {
-		t.equal(error && error.message, 'wotblitz.account.list: search is required', 'rejects without a search value');
+		t.equal(error && error.message, 'wotblitz.account.list: search is required', '.account.list missing search value');
 	});
 
 	wotblitz.account.list('user');
@@ -125,7 +127,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'account_id,nickname', '.account.list fields specified with array');
 
 	wotblitz.account.info().then(failure, error => {
-		t.equal(error && error.message, 'wotblitz.account.info: account_id is required', 'rejects without an account_id');
+		t.equal(error && error.message, 'wotblitz.account.info: account_id is required', '.account.info missing account_id');
 	});
 
 	wotblitz.account.info('1009922015');

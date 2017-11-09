@@ -5,9 +5,9 @@
   "main": "./wotblitz.js",
   "scripts": {
     "cover": "istanbul cover tape -- test/*.js",
-    "lint": "eslint -f tap *.js test | faucet",
+    "lint": "eslint -f tap *.js test",
     "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
-    "test": "faucet test/*.js"
+    "test": "tape test/*.js"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "eslint": "^4.10.0",
-    "faucet": "0.0.1",
     "istanbul": "^0.4.5",
     "mockery": "^2.0.0",
     "nock": "^9.1.0",

@@ -72,7 +72,7 @@ Request.prototype.execute = function(options, body) {
 
 	body.language = options.language;
 
-	var url = 'https:\/\/' + options.hostname + options.region + options.path;
+	var url = 'https://' + options.hostname + options.region + options.path;
 
 	if (options.method !== 'GET') {
 		options = {

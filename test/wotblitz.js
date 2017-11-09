@@ -4,7 +4,7 @@ var test = require('tape');
 var fetch = {};
 
 // synchronous promise utils to avoid the need for sub-tests
-Promise = function() { throw new Error('Promise constructor not implemented for tests'); };
+global.Promise = function() { throw new Error('Promise constructor not implemented for tests'); };
 Promise.resolve = value => {
 	return {then: resolve => resolve(value)};
 };
@@ -45,16 +45,16 @@ test('wotblitz', t => {
 		t.equal(error && error.message, 'wotblitz.auth.login: redirect_uri is required', 'rejects without a redirect_uri');
 	});
 
-	wotblitz.auth.login('http:\/\/localhost:8888');
-	t.equal(fetch.url, 'https:\/\/api.worldoftanks.com/wot/auth/login/', '.auth.login url');
+	wotblitz.auth.login('http://localhost:8888');
+	t.equal(fetch.url, 'https://api.worldoftanks.com/wot/auth/login/', '.auth.login url');
 	t.equal(fetch.options.method, 'POST', '.auth.login method');
-	t.equal(fetch.options.body.redirect_uri, 'http:\/\/localhost:8888', '.auth.login redirect_uri');
+	t.equal(fetch.options.body.redirect_uri, 'http://localhost:8888', '.auth.login redirect_uri');
 	t.equal(fetch.options.body.nofollow, '1', '.auth.login default nofollow');
 	t.equal(fetch.options.body.expires_at, '', '.auth.login default expires_at');
 	t.equal(fetch.options.body.display, '', '.auth.login default page');
 
-	wotblitz.auth.login('http:\/\/localhost:8080', 0, 1209600, 'page');
-	t.equal(fetch.options.body.redirect_uri, 'http:\/\/localhost:8080', '.auth.login redirect_uri');
+	wotblitz.auth.login('http://localhost:8080', 0, 1209600, 'page');
+	t.equal(fetch.options.body.redirect_uri, 'http://localhost:8080', '.auth.login redirect_uri');
 	t.equal(fetch.options.body.nofollow, '0', '.auth.login nofollow');
 	t.equal(fetch.options.body.expires_at, '1209600', '.auth.login expires_at');
 	t.equal(fetch.options.body.display, 'page', '.auth.login page');
@@ -64,7 +64,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.auth.prolongate('b608c5293fdc496db8fc238151b9a47283ae183c');
-	t.equal(fetch.url, 'https:\/\/api.worldoftanks.com/wot/auth/prolongate/', '.auth.prolongate url');
+	t.equal(fetch.url, 'https://api.worldoftanks.com/wot/auth/prolongate/', '.auth.prolongate url');
 	t.equal(fetch.options.method, 'POST', '.auth.prolongate method');
 	t.equal(fetch.options.body.access_token, 'b608c5293fdc496db8fc238151b9a47283ae183c', '.auth.prolongate access_token');
 	t.equal(fetch.options.body.expires_at, '1209600', '.auth.prolongate default expires_at');
@@ -78,12 +78,12 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.auth.logout('6c2f7b7eba9f4b359bf5f511d48c6bed269ac37e');
-	t.equal(fetch.url, 'https:\/\/api.worldoftanks.com/wot/auth/logout/', '.auth.logout url');
+	t.equal(fetch.url, 'https://api.worldoftanks.com/wot/auth/logout/', '.auth.logout url');
 	t.equal(fetch.options.method, 'POST', '.auth.logout method');
 	t.equal(fetch.options.body.access_token, '6c2f7b7eba9f4b359bf5f511d48c6bed269ac37e', '.auth.logout access_token');
 
 	wotblitz.servers.info();
-	t.equal(fetch.url, 'https:\/\/api.worldoftanks.com/wgn/servers/info/', '.servers.info url');
+	t.equal(fetch.url, 'https://api.worldoftanks.com/wgn/servers/info/', '.servers.info url');
 	t.equal(fetch.options.method, 'POST', '.servers.info requst method');
 	t.equal(fetch.options.body.game, '', '.servers.info game default');
 	t.equal(fetch.options.body.fields, '', '.servers.info fields default');
@@ -101,7 +101,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.account.list('user');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/account/list/', '.account.list url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/account/list/', '.account.list url');
 	t.equal(fetch.options.method, 'POST', '.accout.list method');
 	t.equal(fetch.options.body.search, 'user', '.account.list search');
 	t.equal(fetch.options.body.type, '', '.account.list default type');
@@ -125,7 +125,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.account.info('1009922015');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/account/info/', '.account.info url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/account/info/', '.account.info url');
 	t.equal(fetch.options.method, 'POST', '.account.info method');
 	t.equal(fetch.options.body.account_id, '1009922015', '.account.info account_id');
 	t.equal(fetch.options.body.access_token, '', '.account.info default access_token');
@@ -164,7 +164,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.account.achievements('1009922021');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/account/achievements/', '.account.achievements url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/account/achievements/', '.account.achievements url');
 	t.equal(fetch.options.method, 'POST', '.account.achievements method');
 	t.equal(fetch.options.body.account_id, '1009922021', '.account.achievements account_id');
 	t.equal(fetch.options.body.fields, '', '.account.achievements default fields');
@@ -190,7 +190,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.account.tankstats('1009922050', '1');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/account/tankstats/', '.account.tankstats url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/account/tankstats/', '.account.tankstats url');
 	t.equal(fetch.options.method, 'POST', '.account.tankstats method');
 	t.equal(fetch.options.body.account_id, '1009922050', '.account.tankstats account_id');
 	t.equal(fetch.options.body.tank_id, '1', '.account.tankstats tank_id');
@@ -207,7 +207,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'account_id,all.battles,all.wins', '.account.tankstats multiple fields');
 
 	wotblitz.clans.list();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clans/list/', '.clans.list url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clans/list/', '.clans.list url');
 	t.equal(fetch.options.method, 'POST', '.clans.list method');
 	t.equal(fetch.options.body.search, '', '.clans.list search');
 	t.equal(fetch.options.body.page_no, '', '.clans.list default page_no');
@@ -231,7 +231,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clans.info(17);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clans/info/', '.clans.info url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clans/info/', '.clans.info url');
 	t.equal(fetch.options.method, 'POST', '.clans.info method');
 	t.equal(fetch.options.body.clan_id, '17', '.clans.info clan_id');
 	t.equal(fetch.options.body.extra, '', '.clans.info default extra');
@@ -254,7 +254,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clans.accountinfo('1009922080');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clans/accountinfo/', '.clans.accountinfo url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clans/accountinfo/', '.clans.accountinfo url');
 	t.equal(fetch.options.method, 'POST', '.clans.accountinfo method');
 	t.equal(fetch.options.body.account_id, '1009922080', '.clans.accountinfo account_id');
 	t.equal(fetch.options.body.extra, '', '.clans.accountinfo default extra');
@@ -271,7 +271,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'account_id,account_name,clan.tag,clan.clan_id', '.clans.accountinfo multiple fields');
 
 	wotblitz.clans.glossary();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clans/glossary/', '.clans.glossary url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clans/glossary/', '.clans.glossary url');
 	t.equal(fetch.options.method, 'POST', '.clans.glossary method');
 	t.equal(fetch.options.body.fields, '', '.clans.glossary default fields');
 
@@ -282,7 +282,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'clan_roles,settings', '.clans.glossary multiple fields');
 
 	wotblitz.encyclopedia.vehicles();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/vehicles/', '.encyclopedia.vehicles url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/vehicles/', '.encyclopedia.vehicles url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.vehicles method');
 	t.equal(fetch.options.body.tank_id, '', '.encyclopedia.vehicles default tank_id');
 	t.equal(fetch.options.body.nation, '', '.encyclopedia.vehicles default nation');
@@ -305,7 +305,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.encyclopedia.vehicleprofile(11777);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/vehicleprofile/', '.encyclopedia.vehicleprofile url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/vehicleprofile/', '.encyclopedia.vehicleprofile url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.vehicleprofile method');
 	t.equal(fetch.options.body.tank_id, '11777', '.encyclopedia.vehicleprofile tank_id');
 	t.equal(fetch.options.body.profile_id, '', '.encyclopedia.vehicleprofile default profile_id');
@@ -354,7 +354,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'gun.move_down_arc,gun.move_up_arc', '.encyclopedia.vehicleprofile multiple fields');
 
 	wotblitz.encyclopedia.modules();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/modules/', '.encyclopedia.modules url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/modules/', '.encyclopedia.modules url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.modules method');
 	t.equal(fetch.options.body.module_id, '', '.encyclopedia.modules default module_id');
 	t.equal(fetch.options.body.fields, '', '.encyclopedia.modules default fields');
@@ -370,7 +370,7 @@ test('wotblitz', t => {
 		'.encyclopedia.modules multiple fields');
 
 	wotblitz.encyclopedia.provisions();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/provisions/', '.encyclopedia.provisions url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/provisions/', '.encyclopedia.provisions url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.provisions method');
 	t.equal(fetch.options.body.tank_id, '', '.encyclopedia.provisions default tank_id');
 	t.equal(fetch.options.body.provision_id, '', '.encyclopedia.provisions default provision_id');
@@ -389,7 +389,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'name_i18n,description_i18n', '.encyclopedia.provisions multiple fields');
 
 	wotblitz.encyclopedia.info();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/info/', '.encyclopedia.info url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/info/', '.encyclopedia.info url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.info method');
 	t.equal(fetch.options.body.fields, '', '.encyclopedia.info default fields');
 
@@ -400,7 +400,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'game_version,tanks_updated_at', '.encyclopedia.info multiple fields');
 
 	wotblitz.encyclopedia.achievements();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/achievements/', '.encyclopedia.achievements url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/achievements/', '.encyclopedia.achievements url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.achievements method');
 	t.equal(fetch.options.body.fields, '', '.encyclopedia.achievements default fields');
 
@@ -411,7 +411,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.fields, 'name,description,image', '.encyclopedia.achievements multiple fields');
 
 	wotblitz.encyclopedia.crewskills();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/crewskills/', '.encyclopedia.crewskills url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/crewskills/', '.encyclopedia.crewskills url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.crewskills method');
 	t.equal(fetch.options.body.skill_id, '', '.encyclopedia.crewskills default skill_id');
 	t.equal(fetch.options.body.vehicle_type, '', '.encyclopedia.crewskills default vehicle_type');
@@ -436,7 +436,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.encyclopedia.vehicleprofiles(10769);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/encyclopedia/vehicleprofiles/', '.encyclopedia.vehicleprofiles url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/encyclopedia/vehicleprofiles/', '.encyclopedia.vehicleprofiles url');
 	t.equal(fetch.options.method, 'POST', '.encyclopedia.vehicleprofiles method');
 	t.equal(fetch.options.body.tank_id, '10769', '.encyclopedia.vehicleprofiles tank_id');
 	t.equal(fetch.options.body.order_by, '', '.encyclopedia.vehicleprofiles default order_by');
@@ -457,7 +457,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tanks.stats('1009923050');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tanks/stats/', '.tanks.stats url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tanks/stats/', '.tanks.stats url');
 	t.equal(fetch.options.method, 'POST', '.tanks.stats method');
 	t.equal(fetch.options.body.account_id, '1009923050', '.tanks.stats account_id');
 	t.equal(fetch.options.body.access_token, '', '.tanks.stats default access_token');
@@ -486,7 +486,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tanks.achievements('1009923060');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tanks/achievements/', '.tanks.achievements url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tanks/achievements/', '.tanks.achievements url');
 	t.equal(fetch.options.method, 'POST', '.tanks.achievements method');
 	t.equal(fetch.options.body.account_id, '1009923060', '.tanks.achievements account_id');
 	t.equal(fetch.options.body.access_token, '', '.tanks.achivements default access_token');
@@ -515,7 +515,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clanmessages.messages('123456789abcdef0123456789abcdef012345678');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clanmessages/messages/', '.clanmessages.messages url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clanmessages/messages/', '.clanmessages.messages url');
 	t.equal(fetch.options.method, 'POST', '.clanmessages.messages method');
 	t.equal(fetch.options.body.access_token, '123456789abcdef0123456789abcdef012345678', '.clanmessages.messages access_token');
 	t.equal(fetch.options.body.message_id, '', '.clanmessages.messages default message_id');
@@ -566,7 +566,7 @@ test('wotblitz', t => {
 
 	wotblitz.clanmessages.create('f0123456789abcdef0123456789abcdef0123456', 'TEST: Clan Meeting',
 		'Mandatory meeting for all members on Saturday, October 22 at 20:00 EST', 'meeting', 'standard', 1477872000);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clanmessages/create/', '.clanmessages.create url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clanmessages/create/', '.clanmessages.create url');
 	t.equal(fetch.options.method, 'POST', '.clanmessages.create method');
 	t.equal(fetch.options.body.access_token, 'f0123456789abcdef0123456789abcdef0123456', '.clanmessages.create access_token');
 	t.equal(fetch.options.body.title, 'TEST: Clan Meeting', '.clanmessages.create title');
@@ -583,7 +583,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clanmessages.delete('0123456789abcdef0123456789abcdef01234567', 83);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clanmessages/delete/', '.clanmessages.delete url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clanmessages/delete/', '.clanmessages.delete url');
 	t.equal(fetch.options.method, 'POST', '.clanmessages.delete method');
 	t.equal(fetch.options.body.access_token, '0123456789abcdef0123456789abcdef01234567', '.clanmessages.delete access_token');
 	t.equal(fetch.options.body.message_id, '83', '.clanmessages.delete message_id');
@@ -595,7 +595,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clanmessages.like('123456789abcdef0123456789abcdef012345678', 105, 'add');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clanmessages/like/', '.clanmessages.like url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clanmessages/like/', '.clanmessages.like url');
 	t.equal(fetch.options.method, 'POST', '.clanmessages.like method');
 	t.equal(fetch.options.body.access_token, '123456789abcdef0123456789abcdef012345678', '.clanmessages.like access_token');
 	t.equal(fetch.options.body.message_id, '105', '.clanmessages.like message_id');
@@ -614,7 +614,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clanmessages.likes('456789abcdef0123456789abcdef0123456789ab', 112);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clanmessages/likes/', '.clanmessages.likes url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clanmessages/likes/', '.clanmessages.likes url');
 	t.equal(fetch.options.method, 'POST', '.clanmessages.likes method');
 	t.equal(fetch.options.body.access_token, '456789abcdef0123456789abcdef0123456789ab', '.clanmessages.likes access_token');
 	t.equal(fetch.options.body.message_id, '112', '.clanmessages.likes message_id');
@@ -643,7 +643,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.clanmessages.update('23456789abcdef0123456789abcdef0123456789', 185);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/clanmessages/update/', '.clanmessages.update url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/clanmessages/update/', '.clanmessages.update url');
 	t.equal(fetch.options.method, 'POST', '.clanmessages.update method');
 	t.equal(fetch.options.body.access_token, '23456789abcdef0123456789abcdef0123456789', '.clanmessages.update access_token');
 	t.equal(fetch.options.body.message_id, '185', '.clanmessages.update message_id');
@@ -664,7 +664,7 @@ test('wotblitz', t => {
 	t.equal(fetch.options.body.expires_at, '1477873000', '.clanmessages.update expires_at');
 
 	wotblitz.tournaments.list();
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/list/', '.tournaments.list url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/list/', '.tournaments.list url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.list method');
 	t.equal(fetch.options.body.search, '', '.tournaments.list default search');
 	t.equal(fetch.options.body.status, '', '.tournaments.list default status');
@@ -712,7 +712,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tournaments.info(5);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/info/', '.tournaments.info url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/info/', '.tournaments.info url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.info method');
 	t.equal(fetch.options.body.tournament_id, '5', '.tournaments.info tournament_id passed');
 	t.equal(fetch.options.body.fields, '', '.tournaments.info default fields');
@@ -732,7 +732,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tournaments.teams(6);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.teams method');
 	t.equal(fetch.options.body.tournament_id, '6', '.tournaments.teams tournament_id passed');
 	t.equal(fetch.options.body.account_id, '', '.tournaments.teams default account_id');
@@ -753,7 +753,7 @@ test('wotblitz', t => {
 		page_no: 1,
 		limit: 15
 	}, 'players');
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.teams method');
 	t.equal(fetch.options.body.tournament_id, '16', '.tournaments.teams tournament_id passed');
 	t.equal(fetch.options.body.account_id, '1007942', '.tournaments.teams account_id passed');
@@ -774,7 +774,7 @@ test('wotblitz', t => {
 		page_no: 2,
 		limit: 10
 	}, ['title', 'players.name']);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/teams/', '.tournaments.teams url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.teams method');
 	t.equal(fetch.options.body.tournament_id, '26', '.tournaments.teams tournament_id passed');
 	t.equal(fetch.options.body.account_id, '1007943,1007944', '.tournaments.teams account_id passed');
@@ -793,7 +793,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tournaments.stages(7);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/stages/', '.tournaments.stages url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/stages/', '.tournaments.stages url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.stages method');
 	t.equal(fetch.options.body.tournament_id, '7', '.tournaments.stages tournament_id passed');
 	t.equal(fetch.options.body.page_no, '', '.tournaments.stages default page_no');
@@ -825,7 +825,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tournaments.matches(8, 1);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/matches/', '.tournaments.matches url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/matches/', '.tournaments.matches url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.matches method');
 	t.equal(fetch.options.body.tournament_id, '8', '.tournaments.matches tournament_id passed');
 	t.equal(fetch.options.body.stage_id, '1', '.tournaments.matches stage_id passed');
@@ -866,7 +866,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tournaments.standings(9);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/standings/', '.tournaments.standings url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/standings/', '.tournaments.standings url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.standings method');
 	t.equal(fetch.options.body.tournament_id, '9', '.tournaments.standings tournament_id passed');
 	t.equal(fetch.options.body.team_id, '', '.tournaments.standings default team_id');
@@ -913,7 +913,7 @@ test('wotblitz', t => {
 	});
 
 	wotblitz.tournaments.tables(10, 2);
-	t.equal(fetch.url, 'https:\/\/api.wotblitz.com/wotb/tournaments/tables/', '.tournaments.tables url');
+	t.equal(fetch.url, 'https://api.wotblitz.com/wotb/tournaments/tables/', '.tournaments.tables url');
 	t.equal(fetch.options.method, 'POST', '.tournaments.tables method');
 	t.equal(fetch.options.body.tournament_id, '10', '.tournaments.tables tournament_id passed');
 	t.equal(fetch.options.body.stage_id, '2', '.tournaments.tables stage_id passed');

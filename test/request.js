@@ -22,7 +22,7 @@ test('request', t => {
 	t.equal(request.language, 'en', 'defaults to English language.');
 
 	t.test('response successful', st => {
-		var servers = nock('https:\/\/api.worldoftanks.com', {
+		var servers = nock('https://api.worldoftanks.com', {
 			reqheaders: {
 				'Content-Type': 'application/x-www-form-urlencoded'
 			}
@@ -83,7 +83,7 @@ test('request', t => {
 	});
 
 	t.test('response error', st => {
-		var encyclopediaInfo = nock('https:\/\/api.wotblitz.com')
+		var encyclopediaInfo = nock('https://api.wotblitz.com')
 			.get('/wotb/encyclopedia/info/')
 			.query({
 				application_id: 'setfromcode',

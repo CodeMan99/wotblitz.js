@@ -4,10 +4,14 @@ var test = require('tape');
 var fetch = {};
 
 // synchronous promise utils to avoid the need for sub-tests
-global.Promise = function() { throw new Error('Promise constructor not implemented for tests'); };
+global.Promise = function() {
+	throw new Error('Promise constructor not implemented for tests');
+};
+
 Promise.resolve = value => {
 	return {then: resolve => resolve(value)};
 };
+
 Promise.reject = value => {
 	return {then: (_, reject) => reject(value)};
 };

@@ -1,6 +1,5 @@
 var nock = require('nock');
 var test = require('tape');
-
 var Request = require('../request.js');
 var request = new Request();
 

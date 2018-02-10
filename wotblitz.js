@@ -42,6 +42,7 @@ function create(application_id, region, language) {
 		 * wotblitz.application_id = 'wargamingdeveloperkey';
 		 */
 		application_id: {
+			configurable: true,
 			enumerable: true,
 			get: function() {
 				return request.application_id;
@@ -55,6 +56,7 @@ function create(application_id, region, language) {
 		 * Exists directly on the request module.
 		 */
 		language: {
+			configurable: true,
 			enumerable: true,
 			get: function() {
 				return request.language;
@@ -68,6 +70,7 @@ function create(application_id, region, language) {
 		 * Exists directly on the request module.
 		 */
 		region: {
+			configurable: true,
 			enumerable: true,
 			get: function() {
 				return request.region;

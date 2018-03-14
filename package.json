@@ -29,13 +29,13 @@
   },
   "homepage": "https://github.com/CodeMan99/wotblitz.js",
   "dependencies": {
-    "node-fetch": "^2.0.0"
+    "node-fetch": "^2.1.1"
   },
   "devDependencies": {
-    "eslint": "^4.17.0",
+    "eslint": "^4.18.2",
     "istanbul": "^0.4.5",
     "mockery": "^2.0.0",
-    "nock": "^9.1.6",
-    "tape": "^4.6.3"
+    "nock": "^9.2.3",
+    "tape": "^4.9.0"
   }
 }

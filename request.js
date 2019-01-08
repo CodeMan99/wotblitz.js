@@ -43,6 +43,13 @@ Object.defineProperty(Request.prototype, 'application_id', {
 	}
 });
 
+Object.defineProperty(Request.prototype, 'userAgent', {
+	configurable: true,
+	enumerable: false,
+	value: 'wotblitz-v1.2 (+https://github.com/CodeMan99/wotblitz.js)',
+	writable: true
+});
+
 /**
  * WarGaming.net API request tool.
  *
@@ -73,22 +80,27 @@ Request.prototype.execute = function(options, body) {
 	body.language = options.language;
 
 	var url = 'https://' + options.hostname + options.region + options.path;
+	var request;
 
 	if (options.method !== 'GET') {
-		options = {
+		request = fetch(url, {
 			body: querystring.stringify(body),
 			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded'
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'User-Agent': this.userAgent
 			},
 			method: options.method
-		};
+		});
 	} else {
-		url += '?' + querystring.stringify(body);
+		request = fetch(url + '?' + querystring.stringify(body), {
+			headers: {
+				'User-Agent': this.userAgent
+			},
+			method: 'GET'
+		});
 	}
 
-	return fetch(url, options).then(response => {
-		return response.json();
-	}).then(result => {
+	return request.then(response => response.json()).then(result => {
 		switch (result.status) {
 		case 'ok':
 			return result.data;

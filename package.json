@@ -7,7 +7,8 @@
     "cover": "istanbul cover tape -- test/*.js",
     "lint": "eslint -f tap *.js test",
     "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
-    "test": "tape test/*.js"
+    "test": "tape test/*.js",
+    "test:ci": "tape test/*.js | tap-xunit > test-results.xml"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,7 @@
     "istanbul": "^0.4.5",
     "mockery": "^2.0.0",
     "nock": "^10.0.6",
+    "tap-xunit": "^2.4.1",
     "tape": "^4.9.2"
   }
 }

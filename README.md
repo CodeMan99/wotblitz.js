@@ -20,7 +20,7 @@ stated at the top of a file.
 More Resources
 --------------
 
-* [Wargaming.net developer room](https://na.wargaming.net/developers/)
-* [Online tankopedia](http://wotblitz.com/encyclopedia/vehicles/)
+* [Wargaming.net developer room](https://developers.wargaming.net/)
+* [Online tankopedia](https://developers.wargaming.net/reference/all/wotb/encyclopedia/vehicles/?r_realm=na)
 * [Community wiki](http://wiki.wargaming.net/en/WoT_Blitz)
 * [Community forum](http://forum.wotblitz.com/)

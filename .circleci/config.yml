@@ -9,10 +9,13 @@ orbs:
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   test:
+    parameters:
+      node-version:
+        type: string
     # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
-      - image: cimg/node:12.22.10
+      - image: cimg/node:<< parameters.node-version >>
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
@@ -33,4 +36,9 @@ jobs:
 workflows:
   pr:
     jobs:
-      - test
+      - test:
+          matrix:
+            parameters:
+              node-version:
+                - "12.22"
+                - "14.21"

@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/CodeMan99/wotblitz.js",
   "dependencies": {
-    "node-fetch": "^2.3.0"
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "eslint": "^5.12.0",

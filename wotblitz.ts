@@ -1,20 +1,98 @@
-var hosts = {
+import Request from './request.js';
+
+type RequestConstructorParams = ConstructorParameters<typeof Request>;
+type ExecuteRequest = Request['execute'];
+
+type AccountAPI = {
+	list: (search: any, type: any, limit: any, fields: any) => Promise<any>;
+	info: (account_id: any, access_token: any, extra: any, fields: any) => Promise<any>;
+	achievements: (account_id: any, fields: any) => Promise<any>;
+	tankstats: (account_id: any, tank_id: any, fields: any) => Promise<any>;
+};
+
+type AuthAPI = {
+	login: (redirect_uri: any, nofollow: any, expires_at: any, display: any) => Promise<any>;
+	prolongate: (access_token: any, expires_at: any) => Promise<any>;
+	logout: (access_token: any) => Promise<any>;
+};
+
+type ClanMessagesAPI = {
+	messages: (access_token: any, message_id: any, filters: any, fields: any) => Promise<any>;
+	create: (access_token: any, title: any, text: any, type: any, importance: any, expires_at: any) => Promise<any>;
+	delete: (access_token: any, message_id: any) => Promise<any>;
+	like: (access_token: any, message_id: any, action: any) => Promise<any>;
+	likes: (access_token: any, message_id: any, fields: any) => Promise<any>;
+	update: (access_token: any, message_id: any, title: any, text: any, type: any, importance: any, expires_at: any) => Promise<any>;
+};
+
+type ClansAPI = {
+	list: (search: any, page_no: any, limit: any, fields: any) => Promise<any>;
+	info: (clan_id: any, extra: any, fields: any) => Promise<any>;
+	accountinfo: (account_id: any, extra: any, feilds: any) => Promise<any>;
+	glossary: (fields: any) => Promise<any>;
+};
+
+type EncyclopediaAPI = {
+	vehicles: (tank_id: any, nation: any, fields: any) => Promise<any>;
+	vehicleprofile: (tank_id: any, profile_id: any, modules: any, fields: any) => Promise<any>;
+	modules: (module_id: any, fields: any) => Promise<any>;
+	provisions: (tank_id: any, provision_id: any, type: any, fields: any) => Promise<any>;
+	info: (fields: any) => Promise<any>;
+	achievements: (fields: any) => Promise<any>;
+	crewskills: (skill_id: any, vehicle_type: any, fields: any) => Promise<any>;
+	vehicleprofiles: (tank_id: any, order_by: any, fields: any) => Promise<any>;
+};
+
+type ServersAPI = {
+	info: (game: any, fields: any) => Promise<any>;
+};
+
+type TanksAPI = {
+	stats: (account_id: any, access_token: any, tank_id: any, in_garage: any, fields: any) => Promise<any>;
+	achievements: (account_id: any, access_token: any, tank_id: any, in_garage: any, fields: any) => Promise<any>;
+};
+
+type TournamentsAPI = {
+	list: (options: any, fields: any) => Promise<any>;
+	info: (tournament_id: any, fields: any) => Promise<any>;
+	teams: (tournament_id: any, options: any, fields: any) => Promise<any>;
+	stages: (tournament_id: any, options: any, fields: any) => Promise<any>;
+	matches: (tournament_id: any, stage_id: any, options: any, fields: any) => Promise<any>;
+	standings: (tournament_id: any, options: any, fields: any) => Promise<any>;
+	tables: (tournament_id: any, stage_id: any, options: any, fields: any) => Promise<any>;
+};
+
+type wotblitz = {
+	account: AccountAPI;
+	auth: AuthAPI;
+	clanmessages: ClanMessagesAPI;
+	clans: ClansAPI;
+	encyclopedia: EncyclopediaAPI;
+	servers: ServersAPI;
+	tanks: TanksAPI;
+	tournaments: TournamentsAPI;
+
+	request: Request;
+	application_id: string;
+	language: string;
+	region: string;
+};
+
+const hosts = {
 	wot: 'api.worldoftanks',
 	wotb: 'api.wotblitz'
-};
-var Request = require('./request.js');
-var account;
-var auth;
-var clanmessages;
-var clans;
-var encyclopedia;
-var servers;
-var tanks;
-var tournaments;
+} as const;
 
-module.exports = create;
+let account: (request: ExecuteRequest) => AccountAPI;
+let auth: (request: ExecuteRequest) => AuthAPI;
+let clanmessages: (request: ExecuteRequest) => ClanMessagesAPI;
+let clans: (request: ExecuteRequest) => ClansAPI;
+let encyclopedia: (request: ExecuteRequest) => EncyclopediaAPI;
+let servers: (request: ExecuteRequest) => ServersAPI;
+let tanks: (request: ExecuteRequest) => TanksAPI;
+let tournaments: (request: ExecuteRequest) => TournamentsAPI;
 
-function create(application_id, region, language) {
+const create: (...args: RequestConstructorParams) => wotblitz = (application_id, region, language) => {
 	var request = new Request(application_id, region, language);
 	var execute = Request.prototype.execute.bind(request);
 	var wotblitz = {
@@ -25,61 +103,36 @@ function create(application_id, region, language) {
 		encyclopedia: encyclopedia(execute),
 		servers: servers(execute),
 		tanks: tanks(execute),
-		tournaments: tournaments(execute)
+		tournaments: tournaments(execute),
+
+		request,
+
+		get application_id() {
+			return request.application_id;
+		},
+
+		set application_id(value) {
+			request.application_id = value;
+		},
+
+		get language() {
+			return request.language;
+		},
+
+		set language(value) {
+			request.language = value;
+		},
+
+		get region() {
+			return request.region;
+		},
+
+		set region(value) {
+			request.region = value;
+		},
 	};
 
-	Object.defineProperties(wotblitz, {
-		request: {
-			configurable: true,
-			enumerable: false,
-			value: request,
-			writable: true
-		},
-		/**
-		 * Convenience property to get/set the WarGaming developer key.
-		 * Exists directly on the request module.
-		 * @example
-		 * wotblitz.application_id = 'wargamingdeveloperkey';
-		 */
-		application_id: {
-			configurable: true,
-			enumerable: true,
-			get: function() {
-				return request.application_id;
-			},
-			set: function(value) {
-				request.application_id = value;
-			}
-		},
-		/**
-		 * Convenience property to get/set the response language.
-		 * Exists directly on the request module.
-		 */
-		language: {
-			configurable: true,
-			enumerable: true,
-			get: function() {
-				return request.language;
-			},
-			set: function(value) {
-				request.language = value;
-			}
-		},
-		/**
-		 * Convenience property to get/set the top level domain.
-		 * Exists directly on the request module.
-		 */
-		region: {
-			configurable: true,
-			enumerable: true,
-			get: function() {
-				return request.region;
-			},
-			set: function(value) {
-				request.region = value;
-			}
-		}
-	});
+	Object.defineProperty(wotblitz, 'request', {enumerable: false});
 
 	return wotblitz;
 }
@@ -943,3 +996,5 @@ tournaments = request => ({
 		}, options);
 	}
 });
+
+export = create;

@@ -32,3 +32,6 @@ node_modules
 
 # Test Results
 test-results.xml
+
+# typescript output
+dist

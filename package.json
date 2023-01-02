@@ -2,15 +2,15 @@
   "name": "wotblitz",
   "version": "1.2.0",
   "description": "A command line interface to access the World of Tank Blitz API.",
-  "main": "./dist/wotblitz.js",
-  "types": "./dist/wotblitz.d.ts",
+  "main": "./wotblitz.js",
+  "types": "./wotblitz.d.ts",
   "scripts": {
     "build": "tsc",
-    "cover": "nyc tape dist/test/*.js",
-    "lint": "eslint -f tap *.ts test",
+    "cover": "nyc tape test/*.js",
+    "lint": "eslint -f tap request.ts wotblitz.ts test",
     "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
-    "test": "tape dist/test/*.js",
-    "test:ci": "tape dist/test/*.js | tap-xunit > test-results.xml"
+    "test": "tape test/*.js",
+    "test:ci": "tape test/*.js | tap-xunit > test-results.xml"
   },
   "repository": {
     "type": "git",

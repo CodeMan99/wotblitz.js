@@ -34,4 +34,9 @@ node_modules
 test-results.xml
 
 # typescript output
-dist
+/request.d.ts
+/request.js
+/request.js.map
+/wotblitz.d.ts
+/wotblitz.js
+/wotblitz.js.map

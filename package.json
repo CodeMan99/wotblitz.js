@@ -4,10 +4,20 @@
   "description": "A command line interface to access the World of Tank Blitz API.",
   "main": "./wotblitz.js",
   "types": "./wotblitz.d.ts",
+  "files": [
+    "CONTRIBUTING.md",
+    "request.js",
+    "request.d.ts",
+    "test/request.js",
+    "test/wotblitz.js",
+    "wotblitz.js",
+    "wotblitz.d.ts"
+  ],
   "scripts": {
     "build": "tsc",
     "cover": "nyc tape test/*.js",
     "lint": "eslint -f tap request.ts wotblitz.ts test",
+    "prepare": "tsc",
     "start": "APPLICATION_ID=a125d0975020cd5d594f5b940fdaae60 node",
     "test": "tape test/*.js",
     "test:ci": "tape test/*.js | tap-xunit > test-results.xml"

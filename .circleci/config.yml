@@ -23,9 +23,6 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run:
-          name: "Build Typescript"
-          command: npm run build
-      - run:
           name: "Execute Tests"
           command: npm run test:ci
       - run:

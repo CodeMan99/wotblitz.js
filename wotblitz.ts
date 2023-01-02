@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import Request from './request.js';
 
 type RequestConstructorParams = ConstructorParameters<typeof Request>;
@@ -22,7 +23,15 @@ type ClanMessagesAPI = {
 	delete: (access_token: any, message_id: any) => Promise<any>;
 	like: (access_token: any, message_id: any, action: any) => Promise<any>;
 	likes: (access_token: any, message_id: any, fields: any) => Promise<any>;
-	update: (access_token: any, message_id: any, title: any, text: any, type: any, importance: any, expires_at: any) => Promise<any>;
+	update: (
+		access_token: any,
+		message_id: any,
+		title: any,
+		text: any,
+		type: any,
+		importance: any,
+		expires_at: any
+	) => Promise<any>;
 };
 
 type ClansAPI = {
@@ -95,6 +104,7 @@ let tournaments: (request: ExecuteRequest) => TournamentsAPI;
 const create: (...args: RequestConstructorParams) => wotblitz = (application_id, region, language) => {
 	var request = new Request(application_id, region, language);
 	var execute = Request.prototype.execute.bind(request);
+	// eslint-disable-next-line no-shadow
 	var wotblitz = {
 		account: account(execute),
 		auth: auth(execute),
@@ -129,13 +139,13 @@ const create: (...args: RequestConstructorParams) => wotblitz = (application_id,
 
 		set region(value) {
 			request.region = value;
-		},
+		}
 	};
 
 	Object.defineProperty(wotblitz, 'request', {enumerable: false});
 
 	return wotblitz;
-}
+};
 
 Object.defineProperties(create, {
 	/**

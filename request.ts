@@ -1,4 +1,4 @@
-import fetch, { Response } from 'node-fetch';
+import fetch, {Response} from 'node-fetch';
 import * as querystring from 'querystring';
 import * as util from 'util';
 
@@ -95,6 +95,7 @@ class Request {
 		body.language = options.language;
 
 		const url = 'https://' + options.hostname + options.region + options.path;
+
 		let request: Promise<Response>;
 
 		if (options.method !== 'GET') {
@@ -137,7 +138,9 @@ class Request {
 		case 'ok':
 			return result.data;
 		case 'error':
+			// eslint-disable-next-line no-case-declarations
 			const e = result.error;
+			// eslint-disable-next-line no-case-declarations
 			const message = util.format('%d %s: %s=%j', e.code, e.message, e.field, e.value);
 
 			throw new Error(message);

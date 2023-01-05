@@ -11,6 +11,15 @@ items are missing (like a new tank line) it is due to the fact that Wargaming do
 not update their API very often. Missing data is out of the control of this
 application. Any ticket created on this topic will be closed with a "wont fix" label.
 
+Typescript
+----------
+
+Types were created as of v1.3.0. Note that the types themselves are still a work in
+progress and may be flawed. Please report any difficulties.
+
+The javascript module itself received minimal changes. Even the file locations were
+not altered. The intention is a zero change upgrade from v1.2.0.
+
 [License](LICENSE.md)
 ---------------------
 

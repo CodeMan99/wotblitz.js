@@ -50,7 +50,7 @@ class Request {
 	private appId: string | undefined;
 	region: Region;
 	language: Language;
-	userAgent = 'wotblitz-v1.2 (+https://github.com/CodeMan99/wotblitz.js)';
+	userAgent = 'wotblitz-v1.3 (+https://github.com/CodeMan99/wotblitz.js)';
 
 	constructor(application_id?: string, region: Region = '.com', language: Language = 'en') {
 		this.appId = application_id;

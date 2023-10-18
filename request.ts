@@ -137,13 +137,13 @@ class Request {
 		switch (result.status) {
 		case 'ok':
 			return result.data;
-		case 'error':
-			// eslint-disable-next-line no-case-declarations
+		case 'error': {
 			const e = result.error;
-			// eslint-disable-next-line no-case-declarations
 			const message = util.format('%d %s: %s=%j', e.code, e.message, e.field, e.value);
 
 			throw new Error(message);
+		}
+
 		default:
 			return null;
 		}
